@@ -1,0 +1,677 @@
+{
+  "systems": [
+    {
+      "id": "plugin",
+      "label": "01 — Core",
+      "title": "ML Plugin",
+      "color": "var(--plugin)",
+      "dimColor": "var(--plugin-dim)",
+      "bgGradient": "radial-gradient(ellipse at 30% 30%, hsl(210,80%,35%), transparent 70%)",
+      "folders": [
+        {
+          "name": "root",
+          "path": "/",
+          "files": [
+            "functions.php",
+            "ML.php",
+            "package-lock.json",
+            "readme.txt"
+          ]
+        },
+        {
+          "name": "actions",
+          "path": "/actions",
+          "files": [
+            "bulk_copy.php",
+            "change_language.php",
+            "clone_content.php",
+            "clone_page.php",
+            "connect.php",
+            "delete.php",
+            "disconnect_translation.php",
+            "translate_content.php"
+          ]
+        },
+        {
+          "name": "admin",
+          "path": "/admin",
+          "files": [
+            "config.php",
+            "metabox.php",
+            "meta_migration.php",
+            "onboarding.php",
+            "plugin_information.php",
+            "setup.php"
+          ]
+        },
+        {
+          "name": "assets/css",
+          "path": "/assets/css",
+          "files": [
+            "ml_menu_lang_filter.css",
+            "ml_onboarding.css",
+            "ml_relationship_mapping.css",
+            "ml_review_system.css",
+            "ml_tab_restrictions.css",
+            "ml_user_role_settings.css",
+            "plugin-info.css"
+          ]
+        },
+        {
+          "name": "assets/js",
+          "path": "/assets/js",
+          "files": [
+            "admin.js",
+            "ml-language-toggle.js",
+            "ml_auto_string_migrator.js",
+            "ml_dynamic_variable_declaration.js",
+            "ml_full_site_translation.js",
+            "ml_menu_duplication.js",
+            "ml_menu_settings.js",
+            "ml_onboarding.js",
+            "ml_relationship_mapping.js",
+            "ml_review_system.js",
+            "ml_string_translations.js",
+            "ml_tab_restrictions.js",
+            "ml_url.js",
+            "ml_user_role_settings.js",
+            "ml_words_to_ignore.js"
+          ]
+        },
+        {
+          "name": "assets/img/flags",
+          "path": "/assets/img/flags",
+          "files": [
+            "ab.svg",
+            "am.svg",
+            "ar.svg",
+            "az.svg",
+            "be.svg",
+            "bg.svg",
+            "ca.svg",
+            "cs.svg",
+            "da.svg",
+            "de.svg",
+            "el.svg",
+            "en.svg",
+            "es.svg",
+            "et.svg",
+            "eu.svg",
+            "fa.svg",
+            "fi.svg",
+            "fr.svg",
+            "ga.svg",
+            "he.svg",
+            "hi.svg",
+            "hr.svg",
+            "hu.svg",
+            "hy.svg",
+            "id.svg",
+            "is.svg",
+            "it.svg",
+            "ja.svg",
+            "ka.svg",
+            "ko.svg",
+            "lt.svg",
+            "lv.svg",
+            "nl.svg",
+            "no.svg",
+            "pl.svg",
+            "pt.svg",
+            "ro.svg",
+            "ru.svg",
+            "sk.svg",
+            "sl.svg",
+            "sq.svg",
+            "sr.svg",
+            "sv.svg",
+            "sw.svg",
+            "th.svg",
+            "tr.svg",
+            "uk.svg",
+            "ur.svg",
+            "vi.svg",
+            "zh.svg"
+          ]
+        },
+        {
+          "name": "includes/acf",
+          "path": "/includes/acf",
+          "files": [
+            "acf_flexible.php",
+            "acf_group.php",
+            "acf_process_recursive.php",
+            "acf_repeater.php",
+            "ML_ACF_Helper.php",
+            "options_admin.php",
+            "options_core.php",
+            "options_duplication.php",
+            "options_repeater.php"
+          ]
+        },
+        {
+          "name": "includes/licensing",
+          "path": "/includes/licensing",
+          "files": [
+            "feature_gate.php",
+            "init.php",
+            "license_manager.php",
+            "license_settings.php",
+            "license_validator.php",
+            "security_helpers.php"
+          ]
+        },
+        {
+          "name": "includes/menu",
+          "path": "/includes/menu",
+          "files": [
+            "menu_core.php",
+            "menu_customizer.php",
+            "menu_display.php",
+            "menu_duplication.php"
+          ]
+        },
+        {
+          "name": "includes/permalinks",
+          "path": "/includes/permalinks",
+          "files": [
+            "ML_Hook_Manager.php",
+            "ML_Permalink_Handler.php",
+            "ML_Permalink_Helpers.php",
+            "ML_Redirect_Handler.php"
+          ]
+        },
+        {
+          "name": "includes/settings",
+          "path": "/includes/settings",
+          "files": [
+            "language_settings.php",
+            "settings_base.php",
+            "settings_manager.php",
+            "settings_registry.php",
+            "ML_ACF_Settings.php",
+            "developer_tools.php",
+            "fields_to_ignore.php",
+            "front_page_settings.php",
+            "full_site_translation_settings.php",
+            "menu_settings.php",
+            "relationship_mapping_settings.php",
+            "review_settings.php",
+            "source_tracking_settings.php",
+            "string_translations_settings.php",
+            "url_settings.php",
+            "user_role_settings.php",
+            "dynamic_variable_declaration.php",
+            "context_aware_replacer.php",
+            "token_string_scanner.php",
+            "token_utils.php"
+          ]
+        },
+        {
+          "name": "includes/seo",
+          "path": "/includes/seo",
+          "files": ["seo.php"]
+        },
+        {
+          "name": "includes/review",
+          "path": "/includes/review",
+          "files": ["review_system.php", "admin-review-page.php"]
+        },
+        {
+          "name": "includes/meta",
+          "path": "/includes/meta",
+          "files": ["ML_Meta_Migration.php"]
+        },
+        {
+          "name": "includes/misc",
+          "path": "/includes/misc",
+          "files": [
+            "language_toggle.php",
+            "page_filtering.php",
+            "page_ordering.php",
+            "front_page.php",
+            "front_page_handler.php",
+            "post_states.php",
+            "translation_source_tracking.php",
+            "language_transition_handler.php"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "server",
+      "label": "02 — Backend",
+      "title": "License Server",
+      "color": "var(--server)",
+      "dimColor": "var(--server-dim)",
+      "bgGradient": "radial-gradient(ellipse at 70% 30%, hsl(340,65%,30%), transparent 70%)",
+      "folders": [
+        {
+          "name": "root",
+          "path": "/",
+          "files": ["env.example", "package.json", "Procfile", "README.md"]
+        },
+        {
+          "name": "admin/html",
+          "path": "/admin",
+          "files": [
+            "dashboard.html",
+            "index.html",
+            "key-management.html",
+            "login.html",
+            "README.md"
+          ]
+        },
+        {
+          "name": "admin/css",
+          "path": "/admin/css",
+          "files": [
+            "admin.css",
+            "components.css",
+            "login.css",
+            "tickets.css",
+            "variables.css"
+          ]
+        },
+        {
+          "name": "admin/js",
+          "path": "/admin/js",
+          "files": ["admin.js", "dashboard.js", "key-management.js", "login.js"]
+        },
+        { "name": "src", "path": "/src", "files": ["app.js"] },
+        {
+          "name": "src/config",
+          "path": "/src/config",
+          "files": ["database.js"]
+        },
+        {
+          "name": "src/controllers",
+          "path": "/src/controllers",
+          "files": [
+            "adminController.js",
+            "customerController.js",
+            "licenseController.js",
+            "superAdminController.js",
+            "webhookController.js"
+          ]
+        },
+        {
+          "name": "src/middleware",
+          "path": "/src/middleware",
+          "files": [
+            "auth.js",
+            "errorHandler.js",
+            "superAdminSecurity.js",
+            "validation.js"
+          ]
+        },
+        {
+          "name": "src/routes",
+          "path": "/src/routes",
+          "files": ["admin.js", "api.js", "superAdmin.js", "webhooks.js"]
+        },
+        {
+          "name": "src/scripts",
+          "path": "/src/scripts",
+          "files": [
+            "add-admin-notes-column.js",
+            "create-admin-user.js",
+            "create-ticketing-tables.js",
+            "create-user-rate-limits-table.js",
+            "migrate-admin-24h-keys.js",
+            "migrate.js",
+            "run-migration.js",
+            "seed.js"
+          ]
+        },
+        {
+          "name": "src/utils",
+          "path": "/src/utils",
+          "files": ["crypto.js", "logger.js"]
+        }
+      ]
+    },
+    {
+      "id": "portal",
+      "label": "03 — Portal",
+      "title": "Customer Portal",
+      "color": "var(--portal)",
+      "dimColor": "var(--portal-dim)",
+      "bgGradient": "radial-gradient(ellipse at 30% 70%, hsl(150,55%,22%), transparent 70%)",
+      "folders": [
+        {
+          "name": "root",
+          "path": "/",
+          "files": [
+            "footer.php",
+            "functions.php",
+            "header.php",
+            "index.php",
+            "install.php",
+            "page-home.php",
+            "page-licenses.php",
+            "page-login.php",
+            "page-payments.php",
+            "page-profile.php",
+            "page-register.php",
+            "page-support.php",
+            "README.md",
+            "style.css"
+          ]
+        },
+        { "name": "assets/js", "path": "/assets/js", "files": ["main.js"] },
+        {
+          "name": "templates",
+          "path": "/templates",
+          "files": [
+            "dashboard-stats.php",
+            "license-card.php",
+            "payment-item.php"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "site",
+      "label": "04 — Marketing",
+      "title": "Main Site",
+      "color": "var(--site)",
+      "dimColor": "var(--site-dim)",
+      "bgGradient": "radial-gradient(ellipse at 70% 70%, hsl(45,70%,25%), transparent 70%)",
+      "folders": [
+        {
+          "name": "root",
+          "path": "/",
+          "files": [
+            "footer.php",
+            "functions.php",
+            "header.php",
+            "index.php",
+            "install.php",
+            "page-blog.php",
+            "page-documentation.php",
+            "page-features.php",
+            "page-pricing.php",
+            "page-support.php",
+            "README.md",
+            "search.php",
+            "single-ml_docs.php",
+            "style.css",
+            "taxonomy-doc_category.php"
+          ]
+        },
+        {
+          "name": "assets/css",
+          "path": "/assets/css",
+          "files": [
+            "base.css",
+            "components.css",
+            "layout.css",
+            "main.css",
+            "variables.css",
+            "badges.css",
+            "buttons.css",
+            "cards.css",
+            "charts.css",
+            "forms.css",
+            "modals.css",
+            "navigation.css",
+            "sections.css",
+            "tables.css",
+            "utilities.css",
+            "dark.css",
+            "light.css",
+            "theme-switcher.css"
+          ]
+        },
+        {
+          "name": "assets/js",
+          "path": "/assets/js",
+          "files": [
+            "main.js",
+            "mobile-menu.js",
+            "purchase.js",
+            "theme-switcher.js"
+          ]
+        },
+        {
+          "name": "stripe-php/lib",
+          "path": "/includes/stripe-php/lib",
+          "files": [
+            "Account.php",
+            "ApiRequestor.php",
+            "ApiResource.php",
+            "Charge.php",
+            "Customer.php",
+            "Invoice.php",
+            "PaymentIntent.php",
+            "PaymentLink.php",
+            "PaymentMethod.php",
+            "Product.php",
+            "Subscription.php",
+            "Webhook.php",
+            "StripeClient.php",
+            "StripeObject.php"
+          ]
+        },
+        {
+          "name": "stripe-php/Service",
+          "path": "/includes/stripe-php/Service",
+          "files": [
+            "AccountService.php",
+            "ChargeService.php",
+            "CustomerService.php",
+            "InvoiceService.php",
+            "PaymentIntentService.php",
+            "PaymentMethodService.php",
+            "ProductService.php",
+            "SubscriptionService.php",
+            "RefundService.php",
+            "CoreServiceFactory.php"
+          ]
+        },
+        {
+          "name": "stripe-php/Billing",
+          "path": "/includes/stripe-php/Billing",
+          "files": [
+            "Alert.php",
+            "CreditGrant.php",
+            "Meter.php",
+            "MeterEvent.php",
+            "MeterEventAdjustment.php"
+          ]
+        },
+        {
+          "name": "stripe-php/Exception",
+          "path": "/includes/stripe-php/Exception",
+          "files": [
+            "ApiConnectionException.php",
+            "ApiErrorException.php",
+            "AuthenticationException.php",
+            "CardException.php",
+            "RateLimitException.php",
+            "SignatureVerificationException.php"
+          ]
+        },
+        {
+          "name": "stripe-php/other",
+          "path": "/includes/stripe-php/*",
+          "files": [
+            "ApiOperations/All.php",
+            "ApiOperations/Create.php",
+            "ApiOperations/Delete.php",
+            "Checkout/Session.php",
+            "BillingPortal/Session.php",
+            "FinancialConnections/Account.php",
+            "HttpClient/CurlClient.php",
+            "Util/Util.php",
+            "Util/RequestOptions.php",
+            "V2/Event.php"
+          ]
+        }
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "num": "01",
+      "title": "Security Layer",
+      "accent": "hsl(0,70%,55%)",
+      "accentAlpha": "hsla(0,70%,55%,0.07)",
+      "desc": "Multi-level auth with dedicated middleware for input validation, error handling, and super-admin privilege separation.",
+      "evidence": [
+        { "tag": "auth.js", "src": "License Server" },
+        { "tag": "superAdminSecurity.js", "src": "License Server" },
+        { "tag": "validation.js", "src": "License Server" },
+        { "tag": "security_helpers.php", "src": "Plugin" }
+      ]
+    },
+    {
+      "num": "02",
+      "title": "System Architecture",
+      "accent": "hsl(210,80%,60%)",
+      "accentAlpha": "hsla(210,80%,60%,0.07)",
+      "desc": "Four purpose-built systems with clear separation of concerns — each independently structured and deployable.",
+      "evidence": [
+        { "tag": "ML Plugin", "src": "WordPress layer" },
+        { "tag": "License Server", "src": "Node.js API" },
+        { "tag": "Customer Portal", "src": "PHP frontend" },
+        { "tag": "Main Site", "src": "Marketing + docs" }
+      ]
+    },
+    {
+      "num": "03",
+      "title": "Payment Lifecycle",
+      "accent": "hsl(270,65%,62%)",
+      "accentAlpha": "hsla(270,65%,62%,0.07)",
+      "desc": "Full Stripe integration covering checkout, webhooks, subscriptions, invoices, and refunds with the complete SDK wired end-to-end.",
+      "evidence": [
+        { "tag": "webhookController.js", "src": "License Server" },
+        { "tag": "purchase.js", "src": "Main Site" },
+        { "tag": "stripe-php SDK", "src": "Main Site" },
+        { "tag": "page-payments.php", "src": "Portal" }
+      ]
+    },
+    {
+      "num": "04",
+      "title": "Database Operations",
+      "accent": "hsl(45,90%,58%)",
+      "accentAlpha": "hsla(45,90%,58%,0.07)",
+      "desc": "Versioned database migrations with dedicated seed, rollback, and table-creation scripts — proper schema evolution over time.",
+      "evidence": [
+        { "tag": "migrate.js", "src": "License Server" },
+        { "tag": "run-migration.js", "src": "License Server" },
+        { "tag": "seed.js", "src": "License Server" },
+        { "tag": "+ 5 migration scripts", "src": "License Server" }
+      ]
+    },
+    {
+      "num": "05",
+      "title": "License Enforcement",
+      "accent": "hsl(340,75%,62%)",
+      "accentAlpha": "hsla(340,75%,62%,0.07)",
+      "desc": "End-to-end licensing from server-side key issuance to plugin-side feature gating and validation.",
+      "evidence": [
+        { "tag": "licenseController.js", "src": "License Server" },
+        { "tag": "license_validator.php", "src": "Plugin" },
+        { "tag": "feature_gate.php", "src": "Plugin" },
+        { "tag": "page-licenses.php", "src": "Portal" }
+      ]
+    },
+    {
+      "num": "06",
+      "title": "Role-Based Access",
+      "accent": "hsl(150,65%,52%)",
+      "accentAlpha": "hsla(150,65%,52%,0.07)",
+      "desc": "Tiered admin system with separate super-admin, admin, and customer controllers — each with their own routes and UI.",
+      "evidence": [
+        { "tag": "superAdminController.js", "src": "License Server" },
+        { "tag": "adminController.js", "src": "License Server" },
+        { "tag": "customerController.js", "src": "License Server" },
+        { "tag": "dashboard.html", "src": "Admin UI" }
+      ]
+    }
+  ],
+  "architecture": [
+    {
+      "title": "ML Plugin",
+      "color": "hsl(210,80%,60%)",
+      "items": [
+        "actions/ — 8 files",
+        "includes/licensing/ — 6",
+        "includes/settings/ — 20+",
+        "includes/acf/ — 9",
+        "includes/permalinks/ — 4",
+        "assets/flags/ — 80+ SVGs",
+        "admin/ — 6 files"
+      ]
+    },
+    {
+      "title": "License Server",
+      "color": "hsl(340,75%,62%)",
+      "items": [
+        "src/controllers/ — 5",
+        "src/middleware/ — 4",
+        "src/routes/ — 4",
+        "src/scripts/ — 8",
+        "admin/html — 4",
+        "admin/css — 5",
+        "admin/js — 4"
+      ]
+    },
+    {
+      "title": "Customer Portal",
+      "color": "hsl(150,65%,52%)",
+      "items": [
+        "root pages — 8 files",
+        "templates/ — 3",
+        "assets/js — 1",
+        "style.css",
+        "install.php",
+        "functions.php"
+      ]
+    },
+    {
+      "title": "Main Site",
+      "color": "hsl(45,90%,58%)",
+      "items": [
+        "root pages — 8 files",
+        "assets/css — 18",
+        "assets/js — 4",
+        "stripe-php/lib — 80+",
+        "stripe-php/Service — 50+",
+        "stripe-php/Exception — 14"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "from": "plugin",
+      "to": "server",
+      "color": "hsl(270,70%,65%)",
+      "delay": "0s",
+      "label": "license validation"
+    },
+    {
+      "from": "server",
+      "to": "portal",
+      "color": "hsl(340,70%,62%)",
+      "delay": "0.8s",
+      "label": "user data"
+    },
+    {
+      "from": "site",
+      "to": "server",
+      "color": "hsl(45,85%,58%)",
+      "delay": "1.6s",
+      "label": "purchase → key"
+    },
+    {
+      "from": "portal",
+      "to": "plugin",
+      "color": "hsl(150,60%,52%)",
+      "delay": "2.4s",
+      "label": "key sync"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Plugin — Ecosystem Architecture</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="wordmark"><span>ML</span> · Ecosystem Map</div>
+    <nav class="legend">
+      <div class="legend__item">
+        <div class="legend__dot" style="background:var(--plugin)"></div>Plugin
+      </div>
+      <div class="legend__item">
+        <div class="legend__dot" style="background:var(--server)"></div>License Server
+      </div>
+      <div class="legend__item">
+        <div class="legend__dot" style="background:var(--portal)"></div>Customer Portal
+      </div>
+      <div class="legend__item">
+        <div class="legend__dot" style="background:var(--site)"></div>Main Site
+      </div>
+    </nav>
+  </header>
+
+  <div class="grid grid--2x2" id="canvas">
+    <!-- filled by JS -->
+  </div>
+
+  <footer class="page__foot">
+    <span class="page__foot-note">ML Plugin · SaaS Ecosystem</span>
+    <span class="page__foot-note">4 systems · 1 cohesive architecture</span>
+  </footer>
+
+  <svg id="flow-svg"></svg>
+
+  <div class="tooltip" id="tooltip">
+    <div class="tooltip__path" id="tt-path"></div>
+    <div class="tooltip__name" id="tt-name"></div>
+    <div class="tooltip__files">Files: <span id="tt-files"></span></div>
+  </div>
+
+  <script src="javascript/main.js"></script>
+
+</body>
+
+</html>
