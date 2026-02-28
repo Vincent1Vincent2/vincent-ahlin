@@ -1,10 +1,19 @@
+// ── MAIN ──────────────────────────────────────────────────────────────────────
+// Renders treemap quadrants (index.html) and capability/architecture grids
+// (capability.html). Flow detail is handled by flow.js.
+
+function currentPage() {
+  const p = window.location.pathname;
+  if (p.endsWith("capability.html")) return "capability";
+  return "ecosystem";
+}
+
 // ── TREEMAP LAYOUT ────────────────────────────────────────────────────────────
 
 function layoutFolders(folders, W, H) {
   const PAD = 3;
   const rects = [];
   const sorted = [...folders].sort((a, b) => b.files.length - a.files.length);
-
   let remaining = [...sorted];
   let remainX = 0,
     remainY = 0,
@@ -27,8 +36,8 @@ function layoutFolders(folders, W, H) {
       break;
     }
 
-    let rowItems = [];
-    let rowCount = 0;
+    let rowItems = [],
+      rowCount = 0;
     let threshold =
       rowTotal *
       (horizontal
@@ -204,9 +213,16 @@ function renderTreemaps(flows) {
 
 function getPanelCenter(id) {
   const el = document.getElementById(`panel-${id}`);
-  if (!el) return { x: 0, y: 0 };
-  const r = el.getBoundingClientRect();
-  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  const section = document.getElementById("ecosystem");
+  if (!el || !section) return { x: 0, y: 0 };
+
+  const elRect = el.getBoundingClientRect();
+  const sectionRect = section.getBoundingClientRect();
+
+  return {
+    x: elRect.left - sectionRect.left + elRect.width / 2,
+    y: elRect.top - sectionRect.top + elRect.height / 2,
+  };
 }
 
 function drawFlowLines(flows) {
@@ -303,19 +319,28 @@ function buildArchitecture(architecture) {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
 async function init() {
-  const response = await fetch("./data/data.json");
-  const data = await response.json();
+  const page = currentPage();
 
-  buildQuadrants(data.systems);
-  buildCapabilities(data.capabilities);
-  buildArchitecture(data.architecture);
+  if (page === "ecosystem") {
+    const res = await fetch("./data/systems.json");
+    const data = await res.json();
 
-  setTimeout(() => renderTreemaps(data.flows), 100);
+    buildQuadrants(data.systems);
+    setTimeout(() => renderTreemaps(data.flows), 100);
 
-  window.addEventListener("resize", () => {
-    Object.values(panelEls).forEach(({ inner }) => (inner.innerHTML = ""));
-    renderTreemaps(data.flows);
-  });
+    window.addEventListener("resize", () => {
+      Object.values(panelEls).forEach(({ inner }) => (inner.innerHTML = ""));
+      renderTreemaps(data.flows);
+    });
+  }
+
+  if (page === "capability") {
+    const res = await fetch("./data/capabilities.json");
+    const data = await res.json();
+
+    buildCapabilities(data.capabilities);
+    buildArchitecture(data.architecture);
+  }
 }
 
 init();
