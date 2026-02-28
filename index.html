@@ -22,10 +22,20 @@
   <div class="scroll-container" id="scroll-container">
 
     <section class="scroll-section" id="ecosystem">
-      <div class="grid grid--2x2" id="canvas">
-        <!-- filled by main.js -->
+      <div class="ecosystem-split">
+
+        <div class="ecosystem-split__treemap">
+          <div class="grid grid--2x2" id="canvas">
+            <!-- filled by main.js -->
+          </div>
+          <svg id="flow-svg"></svg>
+        </div>
+
+        <div class="ecosystem-split__panel" id="ecosystem-panel">
+          <!-- filled by main.js -->
+        </div>
+
       </div>
-      <svg id="flow-svg"></svg>
     </section>
 
     <section class="scroll-section" id="flow">
