@@ -151,6 +151,94 @@
   margin-bottom: var(--space-9);
 }
 
+/* ── ECOSYSTEM SPLIT ─────────────────────────────────────────────────────────
+   Wraps the treemap and the context panel side by side.
+   Treemap takes ~58%, panel takes ~42%.
+   The treemap sub-container is position:relative so #flow-svg
+   stays scoped to it rather than the full section.
+────────────────────────────────────────────────────────────────────────────── */
 #ecosystem {
   position: relative;
+}
+
+.ecosystem-split {
+  display: grid;
+  grid-template-columns: 58fr 42fr;
+  height: calc(100vh - var(--header-height));
+  overflow: hidden;
+}
+
+.ecosystem-split__treemap {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ecosystem-split__treemap .grid--2x2 {
+  width: 100%;
+  height: 100%;
+  padding: var(--canvas-padding-top) var(--space-6) var(--space-9)
+    var(--space-9);
+}
+
+/* ── ECOSYSTEM PANEL ─────────────────────────────────────────────────────────
+   Right-side context panel. Uses existing surface/border tokens.
+   Scrollable internally in case of overflow on small screens.
+────────────────────────────────────────────────────────────────────────────── */
+
+.ecosystem-split__panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-10) var(--space-9) var(--space-10) var(--space-8);
+  border-left: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  gap: var(--space-8);
+}
+
+.ecosystem-panel__headline {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: var(--space-4);
+}
+
+.ecosystem-panel__body {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.ecosystem-panel__points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.ecosystem-panel__point {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-7);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  animation: panelIn var(--duration-enter) var(--ease-out) both;
+}
+
+.ecosystem-panel__point-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+}
+
+.ecosystem-panel__point-desc {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.7;
 }

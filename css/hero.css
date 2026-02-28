@@ -64,6 +64,22 @@
   animation: panelIn var(--duration-enter) 0.18s var(--ease-out) forwards;
 }
 
+.hero__fixed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.hero__desc {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--text);
+  max-width: 43%;
+  line-height: 1.7;
+  opacity: 0;
+  animation: panelIn var(--duration-enter) 0.18s var(--ease-out) forwards;
+}
+
 /* ── HERO STATS ──────────────────────────────────────────────────────────────── */
 
 .hero__stats {

@@ -7,7 +7,7 @@
   --bg: #0a0a0f;
   --surface: #0f0f18;
   --text: #e8e6f0;
-  --muted: #5a5870;
+  --muted: #7e7d89;
 
   /* Colors — white surface overlays */
   --surface-subtle: rgba(255, 255, 255, 0.06);
@@ -15,9 +15,13 @@
 
   /* Colors — system accents */
   --plugin: hsl(210, 80%, 60%);
+  --plugin-alt: hsla(210, 100%, 27%, 0.5);
   --server: hsl(340, 75%, 62%);
+  --server-alt: hsla(340, 100%, 27%, 0.5);
   --portal: hsl(150, 65%, 52%);
+  --portal-alt: hsla(150, 100%, 27%, 0.5);
   --site: hsl(45, 90%, 58%);
+  --site-alt: hsla(45, 100%, 27%, 0.5);
 
   --plugin-dim: hsl(210, 40%, 18%);
   --server-dim: hsl(340, 35%, 16%);
@@ -105,6 +109,7 @@
 
   /* Animation — easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --bounce: cubic-bezier(0.02, -0.43, 0.99, 1.27);
 
   /* Animation — entry transform */
   --anim-enter-y: 12px;
