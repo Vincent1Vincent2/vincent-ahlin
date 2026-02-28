@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ML Plugin — Ecosystem Architecture</title>
+  <title>ML Plugin — Ecosystem Map</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -12,32 +12,32 @@
 
   <header>
     <div class="wordmark"><span>ML</span> · Ecosystem Map</div>
-    <nav class="legend">
-      <div class="legend__item">
-        <div class="legend__dot" style="background:var(--plugin)"></div>Plugin
-      </div>
-      <div class="legend__item">
-        <div class="legend__dot" style="background:var(--server)"></div>License Server
-      </div>
-      <div class="legend__item">
-        <div class="legend__dot" style="background:var(--portal)"></div>Customer Portal
-      </div>
-      <div class="legend__item">
-        <div class="legend__dot" style="background:var(--site)"></div>Main Site
-      </div>
-    </nav>
+    <div class="header__meta">4 systems · file structure</div>
   </header>
 
-  <div class="grid grid--2x2" id="canvas">
-    <!-- filled by JS -->
+  <nav id="site-nav" aria-label="Site navigation">
+    <!-- filled by nav.js -->
+  </nav>
+
+  <div class="scroll-container" id="scroll-container">
+
+    <section class="scroll-section" id="ecosystem">
+      <div class="grid grid--2x2" id="canvas">
+        <!-- filled by main.js -->
+      </div>
+      <svg id="flow-svg"></svg>
+    </section>
+
+    <section class="scroll-section" id="flow">
+      <div class="intro-section__inner">
+        <div class="section-label">Data flow</div>
+        <div id="flow-detail">
+          <!-- filled by flow.js -->
+        </div>
+      </div>
+    </section>
+
   </div>
-
-  <footer class="page__foot">
-    <span class="page__foot-note">ML Plugin · SaaS Ecosystem</span>
-    <span class="page__foot-note">4 systems · 1 cohesive architecture</span>
-  </footer>
-
-  <svg id="flow-svg"></svg>
 
   <div class="tooltip" id="tooltip">
     <div class="tooltip__path" id="tt-path"></div>
@@ -45,7 +45,13 @@
     <div class="tooltip__files">Files: <span id="tt-files"></span></div>
   </div>
 
+  <nav class="nav-bar" id="nav-bar" aria-label="Section navigation">
+    <!-- filled by nav.js -->
+  </nav>
+
+  <script src="javascript/nav.js"></script>
   <script src="javascript/main.js"></script>
+  <script src="javascript/flow.js"></script>
 
 </body>
 

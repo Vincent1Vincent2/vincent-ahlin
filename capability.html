@@ -15,25 +15,36 @@
     <div class="header__meta">Drawn from file structure · 4 systems</div>
   </header>
 
-  <div class="grid grid--1x1">
+  <nav id="site-nav" aria-label="Site navigation">
+    <!-- filled by nav.js -->
+  </nav>
 
-    <div class="section-label">Core capabilities</div>
-    <div class="grid grid--3col" id="cap-grid">
-      <!-- Each .panel built by JS -->
-    </div>
+  <div class="scroll-container" id="scroll-container">
 
-    <div class="section-label">System breakdown</div>
-    <div class="grid grid--4col" id="arch-grid">
-      <!-- Each .panel built by JS -->
-    </div>
+    <section class="scroll-section" id="capabilities">
+      <div class="grid grid--1x1">
+        <div class="grid grid--3col" id="cap-grid">
+          <!-- filled by main.js -->
+        </div>
+      </div>
+    </section>
 
-    <footer class="page__foot">
-      <span class="page__foot-note">ML Plugin · SaaS Ecosystem</span>
-      <span class="page__foot-note">4 systems · 1 cohesive architecture</span>
-    </footer>
+    <section class="scroll-section" id="architecture">
+      <div class="intro-section__inner">
+        <div class="section-label">System breakdown</div>
+        <div class="grid grid--4col" id="arch-grid">
+          <!-- filled by main.js -->
+        </div>
+      </div>
+    </section>
 
   </div>
 
+  <nav class="nav-bar" id="nav-bar" aria-label="Section navigation">
+    <!-- filled by nav.js -->
+  </nav>
+
+  <script src="javascript/nav.js"></script>
   <script src="javascript/main.js"></script>
 
 </body>
