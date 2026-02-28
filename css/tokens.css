@@ -1,0 +1,175 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap");
+
+/* ── DESIGN TOKENS ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Colors — base */
+  --bg: #0a0a0f;
+  --surface: #0f0f18;
+  --text: #e8e6f0;
+  --muted: #5a5870;
+
+  /* Colors — white surface overlays */
+  --surface-subtle: rgba(255, 255, 255, 0.06);
+  --surface-hover: rgba(255, 255, 255, 0.1);
+
+  /* Colors — system accents */
+  --plugin: hsl(210, 80%, 60%);
+  --server: hsl(340, 75%, 62%);
+  --portal: hsl(150, 65%, 52%);
+  --site: hsl(45, 90%, 58%);
+
+  --plugin-dim: hsl(210, 40%, 18%);
+  --server-dim: hsl(340, 35%, 16%);
+  --portal-dim: hsl(150, 35%, 15%);
+  --site-dim: hsl(45, 40%, 16%);
+
+  /* Typography — families */
+  --font-sans: "Syne", sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  /* Typography — scale (5 steps) */
+  --text-xs: 8px;
+  --text-sm: 10px;
+  --text-md: 13px;
+  --text-base: 15px;
+  --text-lg: 17px;
+
+  /* Typography — weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Typography — tracking */
+  --tracking-tight: 0.08em;
+  --tracking-normal: 0.18em;
+  --tracking-wide: 0.2em;
+
+  /* Spacing — base scale */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 16px;
+  --space-8: 20px;
+  --space-9: 24px;
+  --space-10: 32px;
+
+  /* Radii */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.12);
+
+  /* Opacity */
+  --opacity-bg-default: 0.06;
+  --opacity-bg-hover: 0.1;
+  --opacity-noise: 0.025;
+  --opacity-muted: 0.4;
+  --opacity-label: 0.5;
+  --opacity-high: 0.7;
+
+  /* Shadows */
+  --shadow-panel: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-tooltip: 0 16px 48px rgba(0, 0, 0, 0.6);
+
+  /* Z-index — global layers */
+  --z-flow: 50;
+  --z-header: 100;
+  --z-noise: 200;
+  --z-tooltip: 1000;
+
+  /* Z-index — local stacking */
+  --z-above: 2;
+  --z-top: 10;
+
+  /* Tooltip */
+  --tooltip-bg: #16151f;
+  --tooltip-border: rgba(255, 255, 255, 0.1);
+  --tooltip-width: 180px;
+
+  /* Animation — durations */
+  --duration-fast: 0.15s;
+  --duration-normal: 0.2s;
+  --duration-slow: 0.3s;
+  --duration-flow: 3s;
+  --duration-enter: 0.6s;
+
+  /* Animation — easing */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Animation — entry transform */
+  --anim-enter-y: 12px;
+  --anim-enter-scale: 0.98;
+
+  /* Animation — stagger delays */
+  --anim-delay-1: 0.05s;
+  --anim-delay-2: 0.15s;
+  --anim-delay-3: 0.25s;
+  --anim-delay-4: 0.35s;
+
+  /* Flow lines */
+  --flow-stroke-width: 1.5;
+  --flow-dash-array: 6 4;
+  --flow-dash-offset: -20;
+  --flow-opacity-min: 0;
+  --flow-opacity-mid: 0.35;
+  --flow-opacity-max: 0.5;
+
+  /* Layout — header */
+  --header-height: 53px;
+  --header-padding-x: var(--space-10);
+  --header-padding-y: var(--space-6);
+
+  /* Layout — grid */
+  --grid-gap: var(--space-4);
+
+  /* Layout — canvas (ecosystem) */
+  --canvas-padding-top: var(--header-height);
+
+  /* Layout — page (capability) */
+  --page-max-width: 1140px;
+  --page-padding-x: var(--space-10);
+  --page-padding-y: var(--space-9);
+
+  /* Layout — panel */
+  --panel-header-height: 53px;
+  --panel-hover-bg: #13121e;
+  --panel-accent-bar: 2px;
+
+  /* Layout — folder */
+  --folder-header-height: 24px;
+  --folder-hover-scale: 1.015;
+  --folder-gap: var(--space-1);
+  --folder-pad-x: var(--space-4);
+  --folder-pad-y: var(--space-2);
+  --folder-pad: var(--space-5);
+
+  /* Layout — hero */
+  --hero-min-height: 100svh;
+  --hero-padding-top: calc(var(--header-height) + var(--space-10));
+  --hero-padding-bottom: 140px;
+
+  /* Layout — nav bar */
+  --nav-bar-height: 52px;
+  --nav-bar-bg: rgba(10, 10, 15, 0.92);
+
+  /* Layout — content panel */
+  --content-panel-max-width: 1140px;
+  --content-panel-padding: var(--space-10) var(--space-10) 120px;
+
+  /* Flip card */
+  --flip-duration: 0.5s;
+
+  /* Misc */
+  --noise-size: 128px;
+  --dot-size: 8px;
+}

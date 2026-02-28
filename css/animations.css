@@ -1,0 +1,26 @@
+/* ── SHARED ENTRY ANIMATIONS ─────────────────────────────────────────────────── */
+
+@keyframes panelIn {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── FLOW ANIMATION ──────────────────────────────────────────────────────────── */
+
+@keyframes flowPulse {
+  0%,
+  100% {
+    opacity: var(--flow-opacity-min);
+    stroke-dashoffset: 0;
+  }
+  20%,
+  80% {
+    opacity: var(--flow-opacity-mid);
+  }
+  50% {
+    opacity: var(--flow-opacity-max);
+    stroke-dashoffset: var(--flow-dash-offset);
+  }
+}

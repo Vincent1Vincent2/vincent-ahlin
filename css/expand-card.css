@@ -1,0 +1,51 @@
+/* ── EXPAND CARD ─────────────────────────────────────────────────────────────── */
+
+.expand-card__detail {
+  max-height: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+  opacity: 0;
+  transition:
+    max-height 0.4s var(--ease-out),
+    opacity var(--duration-slow),
+    margin-bottom var(--duration-slow);
+}
+
+.expand-card__detail.is-visible {
+  max-height: 400px;
+  opacity: 1;
+  margin-bottom: var(--space-7);
+}
+
+.expand-card__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-5);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    color var(--duration-normal),
+    border-color var(--duration-normal),
+    background var(--duration-normal);
+}
+
+.expand-card__toggle:hover {
+  color: var(--text);
+  border-color: var(--border-default);
+  background: var(--surface-subtle);
+}
+
+.expand-card__toggle-icon {
+  transition: transform var(--duration-normal);
+  display: inline-block;
+}
+
+.expand-card[data-expanded="true"] .expand-card__toggle-icon {
+  transform: rotate(180deg);
+}

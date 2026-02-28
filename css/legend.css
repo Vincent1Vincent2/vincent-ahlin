@@ -1,0 +1,30 @@
+/* ── LEGEND ──────────────────────────────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  gap: var(--space-8);
+  align-items: center;
+  list-style: none;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--duration-normal);
+}
+
+.legend__item:hover {
+  color: var(--text);
+}
+
+.legend__dot {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  flex-shrink: 0;
+}

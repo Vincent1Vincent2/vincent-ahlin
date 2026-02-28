@@ -1,0 +1,42 @@
+/* ── TOOLTIP ─────────────────────────────────────────────────────────────────── */
+
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: var(--z-tooltip);
+  background: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-7);
+  min-width: var(--tooltip-width);
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+  box-shadow: var(--shadow-tooltip);
+}
+
+.tooltip.show {
+  opacity: 1;
+}
+
+.tooltip__path {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-bottom: var(--space-2);
+}
+
+.tooltip__name {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-3);
+}
+
+.tooltip__files {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.tooltip__files span {
+  color: var(--text);
+}

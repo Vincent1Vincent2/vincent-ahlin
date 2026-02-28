@@ -1,0 +1,63 @@
+/* ── FOLDER ──────────────────────────────────────────────────────────────────── */
+
+.folder {
+  position: absolute;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition:
+    transform var(--duration-fast) ease,
+    box-shadow var(--duration-fast) ease;
+  cursor: pointer;
+}
+
+.folder:hover {
+  transform: scale(var(--folder-hover-scale));
+  box-shadow: var(--shadow-panel);
+  z-index: var(--z-top) !important;
+}
+
+.folder__header {
+  padding: var(--folder-pad-y) var(--folder-pad-x);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder__files {
+  padding: var(--space-1) var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--folder-gap);
+  align-content: flex-start;
+  overflow: hidden;
+  height: calc(100% - var(--folder-header-height));
+}
+
+.folder__pill {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition:
+    background var(--duration-fast),
+    color var(--duration-fast);
+}
+
+.folder:hover .folder__pill {
+  background: var(--surface-hover);
+  color: var(--text);
+}

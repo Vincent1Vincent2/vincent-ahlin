@@ -1,0 +1,280 @@
+/* ── FLOW SVG (ecosystem section) ───────────────────────────────────────────── */
+
+#flow-svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-flow);
+  width: 100%;
+  height: 100%;
+}
+
+.flow-path {
+  fill: none;
+  stroke-width: var(--flow-stroke-width);
+  stroke-dasharray: var(--flow-dash-array);
+  opacity: var(--flow-opacity-min);
+  animation: flowPulse var(--duration-flow) ease-in-out infinite;
+}
+
+/* ── FLOW DIAGRAM (flow section) ─────────────────────────────────────────────── */
+
+.flow-diagram {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-9);
+  height: 100%;
+  align-items: center;
+}
+
+.flow-diagram__map {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--space-7);
+  aspect-ratio: 1;
+}
+
+.flow-diagram__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--z-flow);
+  overflow: visible;
+}
+
+.flow-diagram__svg .flow-path {
+  pointer-events: none;
+}
+
+.flow-diagram__hit {
+  pointer-events: all;
+  cursor: pointer;
+}
+
+/* ── FLOW NODE ───────────────────────────────────────────────────────────────── */
+
+.flow-node {
+  position: relative;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  padding: var(--space-7);
+  transition:
+    border-color var(--duration-slow),
+    background var(--duration-slow),
+    opacity var(--duration-slow);
+  z-index: var(--z-above);
+}
+
+.flow-node::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--panel-accent-bar);
+  height: 100%;
+  background: var(--accent, var(--muted));
+  opacity: var(--opacity-high);
+  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+}
+
+.flow-node__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.flow-node__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  opacity: var(--opacity-label);
+}
+
+.flow-node__title {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+}
+
+.flow-node.is-active {
+  border-color: var(--accent, var(--border-hover));
+  background: var(--panel-hover-bg);
+}
+
+.flow-node.is-active .flow-node__label {
+  opacity: 1;
+}
+
+.flow-node.is-hover {
+  border-color: var(--accent, var(--border-hover));
+  background: var(--panel-hover-bg);
+}
+
+.flow-node.is-dimmed {
+  opacity: 0.3;
+}
+
+/* ── FLOW DIAGRAM LINE LABEL ─────────────────────────────────────────────────── */
+
+.flow-diagram__line-label {
+  transition: opacity var(--duration-normal);
+  pointer-events: none;
+}
+
+/* ── FLOW RIGHT PANEL ────────────────────────────────────────────────────────── */
+
+.flow-diagram__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  height: 100%;
+  justify-content: center;
+}
+
+/* ── FLOW GUIDE ──────────────────────────────────────────────────────────────── */
+
+.flow-diagram__guide {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  padding: var(--space-7) var(--space-9);
+}
+
+.flow-diagram__guide-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.flow-diagram__guide-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.flow-diagram__guide-item strong {
+  color: var(--text);
+  font-weight: var(--weight-semibold);
+}
+
+.flow-diagram__guide-icon {
+  font-size: var(--text-md);
+  opacity: var(--opacity-label);
+  flex-shrink: 0;
+  width: var(--space-7);
+  text-align: center;
+}
+
+/* ── FLOW DESCRIPTION PANEL ──────────────────────────────────────────────────── */
+
+.flow-diagram__desc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  padding: var(--space-9);
+  transition: border-color var(--duration-slow);
+}
+
+.flow-diagram__desc-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.flow-diagram__desc-hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  opacity: var(--opacity-label);
+  text-align: center;
+}
+
+.flow-diagram__desc-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  animation: panelIn var(--duration-enter) var(--ease-out) forwards;
+}
+
+.flow-diagram__desc-route {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.flow-diagram__desc-route .flow-node__label {
+  opacity: 1;
+}
+
+.flow-diagram__desc-arrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  opacity: var(--opacity-high);
+}
+
+.flow-diagram__desc-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  opacity: var(--opacity-high);
+}
+
+.flow-diagram__desc-body {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+/* ── FLOW DESC — connection list (node hover) ────────────────────────────────── */
+
+.flow-diagram__desc-connections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.flow-diagram__desc-connection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.flow-diagram__desc-tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  opacity: var(--opacity-high);
+  margin-left: auto;
+}
+
+.flow-diagram__desc-locked {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  opacity: var(--opacity-label);
+  margin-top: var(--space-4);
+}

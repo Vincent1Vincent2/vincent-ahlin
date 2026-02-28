@@ -1,0 +1,97 @@
+/* ── HERO ────────────────────────────────────────────────────────────────────── */
+
+#hero {
+  min-height: var(--hero-min-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--hero-padding-top) var(--page-padding-x)
+    var(--hero-padding-bottom);
+  text-align: center;
+  gap: var(--space-10);
+  transition:
+    min-height var(--duration-slow) var(--ease-out),
+    padding var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow);
+}
+
+/* Hero stays as a full snap stop always — is-collapsed only fades the content */
+#hero.is-collapsed .hero__top,
+#hero.is-collapsed .hero__stats {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.hero__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  animation: panelIn var(--duration-enter) 0.05s var(--ease-out) forwards;
+}
+
+.hero__title {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--muted);
+  opacity: 0;
+  animation: panelIn var(--duration-enter) 0.1s var(--ease-out) forwards;
+}
+
+.hero__title span {
+  color: var(--text);
+}
+
+.hero__sub {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.7;
+  opacity: 0;
+  animation: panelIn var(--duration-enter) 0.18s var(--ease-out) forwards;
+}
+
+/* ── HERO STATS ──────────────────────────────────────────────────────────────── */
+
+.hero__stats {
+  display: flex;
+  gap: var(--space-10);
+  align-items: center;
+}
+
+.hero__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  opacity: 0;
+  animation: panelIn var(--duration-enter) var(--ease-out) forwards;
+}
+
+.hero__stat-value {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  line-height: 1;
+}
+
+.hero__stat-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
