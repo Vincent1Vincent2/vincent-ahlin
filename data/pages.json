@@ -13,9 +13,9 @@
       "color": "var(--plugin)"
     },
     {
-      "id": "capability",
+      "id": "capability-cabinet",
       "label": "Capability",
-      "href": "capability.html",
+      "href": "capability-cabinet.html",
       "color": "var(--server)"
     }
   ],
@@ -33,7 +33,7 @@
     ],
     "capability": [
       {
-        "id": "capabilities",
+        "id": "capabilities-cabinet",
         "label": "Capabilities",
         "color": "var(--server)"
       },
