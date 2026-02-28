@@ -72,6 +72,8 @@ const Cabinet = (() => {
     file.style.setProperty("--file-border", alpha(sys.color, 0.28));
     file.style.setProperty("--file-color", sys.color);
     file.style.setProperty("--file-line", alpha(sys.color, 0.5));
+    file.style.setProperty("--file-border-hover", alpha(sys.color, 0.75));
+    file.style.setProperty("--file-bg-hover", alpha("hsl(0deg, 0%, 0%)", 0.5));
 
     const zOffset = -(index * FILE_SPACING + 10);
     file.style.setProperty("--file-z", `${zOffset}px`);

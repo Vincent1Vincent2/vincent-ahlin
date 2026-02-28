@@ -211,17 +211,19 @@ function renderTreemaps(flows) {
 
 // ── FLOW LINES ────────────────────────────────────────────────────────────────
 
+// Reference the treemap sub-container, not the full #ecosystem section,
+// so SVG coordinates stay correct within the 58% column.
 function getPanelCenter(id) {
   const el = document.getElementById(`panel-${id}`);
-  const section = document.getElementById("ecosystem");
-  if (!el || !section) return { x: 0, y: 0 };
+  const treemap = document.querySelector(".ecosystem-split__treemap");
+  if (!el || !treemap) return { x: 0, y: 0 };
 
   const elRect = el.getBoundingClientRect();
-  const sectionRect = section.getBoundingClientRect();
+  const treemapRect = treemap.getBoundingClientRect();
 
   return {
-    x: elRect.left - sectionRect.left + elRect.width / 2,
-    y: elRect.top - sectionRect.top + elRect.height / 2,
+    x: elRect.left - treemapRect.left + elRect.width / 2,
+    y: elRect.top - treemapRect.top + elRect.height / 2,
   };
 }
 
@@ -256,6 +258,36 @@ function drawFlowLines(flows) {
     text.textContent = label;
     svg.appendChild(text);
   });
+}
+
+// ── ECOSYSTEM PANEL ───────────────────────────────────────────────────────────
+
+function buildEcosystemPanel(ecosystem) {
+  const panel = document.getElementById("ecosystem-panel");
+  if (!panel || !ecosystem) return;
+
+  const intro = document.createElement("div");
+  intro.innerHTML = `
+    <div class="ecosystem-panel__headline">${ecosystem.headline}</div>
+    <div class="ecosystem-panel__body">${ecosystem.body}</div>
+  `;
+  panel.appendChild(intro);
+
+  const points = document.createElement("div");
+  points.className = "ecosystem-panel__points";
+
+  ecosystem.points.forEach((point, i) => {
+    const el = document.createElement("div");
+    el.className = "ecosystem-panel__point";
+    el.style.animationDelay = `${0.1 + i * 0.08}s`;
+    el.innerHTML = `
+      <div class="ecosystem-panel__point-label">${point.label}</div>
+      <div class="ecosystem-panel__point-desc">${point.desc}</div>
+    `;
+    points.appendChild(el);
+  });
+
+  panel.appendChild(points);
 }
 
 // ── CAPABILITIES GRID ─────────────────────────────────────────────────────────
@@ -325,6 +357,7 @@ async function init() {
     const res = await fetch("./data/systems.json");
     const data = await res.json();
 
+    buildEcosystemPanel(data.ecosystem);
     buildQuadrants(data.systems);
     setTimeout(() => renderTreemaps(data.flows), 100);
 

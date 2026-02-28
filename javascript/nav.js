@@ -25,7 +25,7 @@ const Nav = (() => {
   function currentPage() {
     const p = window.location.pathname;
     if (p.endsWith("index.html")) return "ecosystem";
-    if (p.endsWith("capability.html")) return "capability";
+    if (p.endsWith("capability-cabinet.html")) return "capability-cabinet";
     return "intro";
   }
 
