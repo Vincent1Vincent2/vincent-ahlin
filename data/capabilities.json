@@ -1,0 +1,134 @@
+{
+  "capabilities": [
+    {
+      "num": "01",
+      "title": "Security Layer",
+      "accent": "hsl(0,70%,55%)",
+      "accentAlpha": "hsla(0,70%,55%,0.07)",
+      "desc": "Multi-level auth with dedicated middleware for input validation, error handling, and super-admin privilege separation.",
+      "evidence": [
+        { "tag": "auth.js", "src": "License Server" },
+        { "tag": "superAdminSecurity.js", "src": "License Server" },
+        { "tag": "validation.js", "src": "License Server" },
+        { "tag": "security_helpers.php", "src": "Plugin" }
+      ]
+    },
+    {
+      "num": "02",
+      "title": "System Architecture",
+      "accent": "hsl(210,80%,60%)",
+      "accentAlpha": "hsla(210,80%,60%,0.07)",
+      "desc": "Four purpose-built systems with clear separation of concerns — each independently structured and deployable.",
+      "evidence": [
+        { "tag": "ML Plugin", "src": "WordPress layer" },
+        { "tag": "License Server", "src": "Node.js API" },
+        { "tag": "Customer Portal", "src": "PHP frontend" },
+        { "tag": "Main Site", "src": "Marketing + docs" }
+      ]
+    },
+    {
+      "num": "03",
+      "title": "Payment Lifecycle",
+      "accent": "hsl(270,65%,62%)",
+      "accentAlpha": "hsla(270,65%,62%,0.07)",
+      "desc": "Full Stripe integration covering checkout, webhooks, subscriptions, invoices, and refunds with the complete SDK wired end-to-end.",
+      "evidence": [
+        { "tag": "webhookController.js", "src": "License Server" },
+        { "tag": "purchase.js", "src": "Main Site" },
+        { "tag": "stripe-php SDK", "src": "Main Site" },
+        { "tag": "page-payments.php", "src": "Portal" }
+      ]
+    },
+    {
+      "num": "04",
+      "title": "Database Operations",
+      "accent": "hsl(45,90%,58%)",
+      "accentAlpha": "hsla(45,90%,58%,0.07)",
+      "desc": "Versioned database migrations with dedicated seed, rollback, and table-creation scripts — proper schema evolution over time.",
+      "evidence": [
+        { "tag": "migrate.js", "src": "License Server" },
+        { "tag": "run-migration.js", "src": "License Server" },
+        { "tag": "seed.js", "src": "License Server" },
+        { "tag": "+ 5 migration scripts", "src": "License Server" }
+      ]
+    },
+    {
+      "num": "05",
+      "title": "License Enforcement",
+      "accent": "hsl(340,75%,62%)",
+      "accentAlpha": "hsla(340,75%,62%,0.07)",
+      "desc": "End-to-end licensing from server-side key issuance to plugin-side feature gating and validation.",
+      "evidence": [
+        { "tag": "licenseController.js", "src": "License Server" },
+        { "tag": "license_validator.php", "src": "Plugin" },
+        { "tag": "feature_gate.php", "src": "Plugin" },
+        { "tag": "page-licenses.php", "src": "Portal" }
+      ]
+    },
+    {
+      "num": "06",
+      "title": "Role-Based Access",
+      "accent": "hsl(150,65%,52%)",
+      "accentAlpha": "hsla(150,65%,52%,0.07)",
+      "desc": "Tiered admin system with separate super-admin, admin, and customer controllers — each with their own routes and UI.",
+      "evidence": [
+        { "tag": "superAdminController.js", "src": "License Server" },
+        { "tag": "adminController.js", "src": "License Server" },
+        { "tag": "customerController.js", "src": "License Server" },
+        { "tag": "dashboard.html", "src": "Admin UI" }
+      ]
+    }
+  ],
+  "architecture": [
+    {
+      "title": "ML Plugin",
+      "color": "hsl(210,80%,60%)",
+      "items": [
+        "actions/ — 8 files",
+        "includes/licensing/ — 6",
+        "includes/settings/ — 20+",
+        "includes/acf/ — 9",
+        "includes/permalinks/ — 4",
+        "assets/flags/ — 80+ SVGs",
+        "admin/ — 6 files"
+      ]
+    },
+    {
+      "title": "License Server",
+      "color": "hsl(340,75%,62%)",
+      "items": [
+        "src/controllers/ — 5",
+        "src/middleware/ — 4",
+        "src/routes/ — 4",
+        "src/scripts/ — 8",
+        "admin/html — 4",
+        "admin/css — 5",
+        "admin/js — 4"
+      ]
+    },
+    {
+      "title": "Customer Portal",
+      "color": "hsl(150,65%,52%)",
+      "items": [
+        "root pages — 8 files",
+        "templates/ — 3",
+        "assets/js — 1",
+        "style.css",
+        "install.php",
+        "functions.php"
+      ]
+    },
+    {
+      "title": "Main Site",
+      "color": "hsl(45,90%,58%)",
+      "items": [
+        "root pages — 8 files",
+        "assets/css — 18",
+        "assets/js — 4",
+        "stripe-php/lib — 80+",
+        "stripe-php/Service — 50+",
+        "stripe-php/Exception — 14"
+      ]
+    }
+  ]
+}

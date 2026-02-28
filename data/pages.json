@@ -1,0 +1,43 @@
+{
+  "pages": [
+    {
+      "id": "intro",
+      "label": "Intro",
+      "href": "intro.html",
+      "color": "var(--text)"
+    },
+    {
+      "id": "ecosystem",
+      "label": "Ecosystem",
+      "href": "index.html",
+      "color": "var(--plugin)"
+    },
+    {
+      "id": "capability",
+      "label": "Capability",
+      "href": "capability.html",
+      "color": "var(--server)"
+    }
+  ],
+  "sections": {
+    "intro": [
+      { "id": "overview", "label": "Overview", "color": "var(--text)" },
+      { "id": "stack", "label": "Stack", "color": "var(--plugin)" },
+      { "id": "challenges", "label": "Challenges", "color": "var(--server)" },
+      { "id": "business", "label": "Business", "color": "var(--portal)" },
+      { "id": "role", "label": "Role", "color": "var(--site)" }
+    ],
+    "ecosystem": [
+      { "id": "ecosystem", "label": "Ecosystem", "color": "var(--plugin)" },
+      { "id": "flow", "label": "Data Flow", "color": "var(--portal)" }
+    ],
+    "capability": [
+      {
+        "id": "capabilities",
+        "label": "Capabilities",
+        "color": "var(--server)"
+      },
+      { "id": "architecture", "label": "Architecture", "color": "var(--site)" }
+    ]
+  }
+}
