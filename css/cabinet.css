@@ -1,0 +1,484 @@
+/* ── CABINET ──────────────────────────────────────────────────────────────────
+   Styles for the 3D filing cabinet, drawers, files, and detail panel.
+   Depends on global tokens: --bg, --surface, --border, --text, --muted,
+   --font-sans, --font-mono, --ease-out.
+────────────────────────────────────────────────────────────────────────────── */
+
+/* ── CABINET TOKENS ── */
+:root {
+  --cab-w: 320px; /* front face width  */
+  --cab-h: 520px; /* front face height */
+  --cab-d: 500px; /* depth — top and side face size */
+  --pull: 340px; /* how far a drawer slides toward viewer */
+  --file-spacing: 28px; /* Z gap between stacked files */
+}
+
+/* ── SECTION ── */
+.section-cabinet {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 48px;
+}
+
+/* ── SCENE — perspective container ── */
+/* perspective-origin Y near 0% = viewpoint high above = top face visible */
+.scene {
+  perspective: 1000px;
+  perspective-origin: 50% 5%;
+}
+
+/* ── CABINET — 3D wrapper ── */
+/* rotateX negative = top tilts toward viewer = looking down at cabinet */
+.cabinet {
+  position: relative;
+  width: var(--cab-w);
+  height: var(--cab-h);
+  transform-style: preserve-3d;
+  transform: rotateX(-18deg) rotateY(-22deg);
+}
+
+/* ── CABINET FACES ── */
+
+.cabinet__front {
+  position: absolute;
+  inset: 0;
+  background: hsl(220, 13%, 13%);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+/* Top face — hinges from top edge, folds backward to sit on top */
+.cabinet__top {
+  position: absolute;
+  width: var(--cab-w);
+  height: var(--cab-d);
+  background: hsl(220, 14%, 18%);
+  border: 1px solid hsl(220, 12%, 26%);
+  transform-origin: top center;
+  transform: rotateX(-90deg);
+  top: 0;
+  left: 0;
+}
+
+/* Right side face — hinges from right edge, folds out to the side */
+.cabinet__side {
+  position: absolute;
+  width: var(--cab-d);
+  height: var(--cab-h);
+  background: linear-gradient(to right, hsl(220, 14%, 10%), hsl(220, 14%, 8%));
+  border: 1px solid hsl(220, 12%, 16%);
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  top: 0;
+  left: var(--cab-w);
+}
+
+/* Foot strip */
+.cabinet__foot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: hsl(220, 14%, 10%);
+  border-top: 1px solid hsl(220, 12%, 16%);
+  border-radius: 0 0 3px 3px;
+}
+
+/* ── DRAWER ── */
+
+.drawer {
+  position: relative;
+  height: 120px;
+  border-bottom: 1px solid var(--border);
+  overflow: visible;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.drawer:last-child {
+  border-bottom: none;
+}
+
+/* ── DRAWER BOX — the unit that slides out as one piece ── */
+.drawer__box {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.6s var(--ease-out);
+  transform: translateZ(0px);
+}
+
+.drawer.is-open .drawer__box {
+  transform: translateZ(var(--pull));
+}
+
+/* ── DRAWER FACE ── */
+.drawer__face {
+  position: absolute;
+  inset: 0;
+  background: hsl(220, 13%, 14%);
+  border-bottom: 1px solid hsl(220, 12%, 18%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px 0 21px;
+  gap: 4px;
+  z-index: 2;
+}
+
+/* Accent bar */
+.drawer__face::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+  opacity: 0.7;
+}
+
+.drawer__face:hover {
+  background: hsl(220, 13%, 16%);
+}
+
+.drawer.is-open .drawer__face {
+  background: hsl(220, 13%, 17%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ── DRAWER WALLS — hinge from face edges, stay folded 90deg back ── */
+
+.drawer__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--pull);
+  background: hsl(220, 13%, 11%);
+  border: 1px solid hsl(220, 12%, 17%);
+  transform-origin: bottom center;
+  transform: rotateX(90deg);
+  pointer-events: none;
+}
+
+.drawer__wall-left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--pull);
+  background: hsl(220, 13%, 10%);
+  border: 1px solid hsl(220, 12%, 16%);
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  pointer-events: none;
+}
+
+.drawer__wall-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--pull);
+  background: hsl(220, 13%, 10%);
+  border: 1px solid hsl(220, 12%, 16%);
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  pointer-events: none;
+}
+
+/* ── DRAWER TYPOGRAPHY ── */
+
+.drawer__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.75;
+}
+
+.drawer__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.drawer__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.drawer__handle {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 10px;
+  border-radius: 5px;
+  background: hsl(220, 12%, 22%);
+  border: 1px solid hsl(220, 12%, 28%);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.drawer__face:hover .drawer__handle {
+  background: hsl(220, 12%, 26%);
+  border-color: hsl(220, 12%, 34%);
+}
+
+.hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* ── FILES ── */
+/* Each file is positioned absolutely with a per-file --file-z CSS var
+   set in JS, stacking them along the Z axis into the cabinet depth. */
+
+.file {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  transform-style: preserve-3d;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.drawer.is-open .file {
+  opacity: 1;
+  pointer-events: all;
+  transition:
+    opacity 0.2s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+
+.drawer.is-open .file:hover {
+  transform: translateY(calc(-50% - 40px)) translateZ(var(--file-z)) !important;
+}
+
+/* Staggered fade-in */
+.drawer.is-open .file:nth-child(1) {
+  transition-delay: 0.2s;
+}
+.drawer.is-open .file:nth-child(2) {
+  transition-delay: 0.24s;
+}
+.drawer.is-open .file:nth-child(3) {
+  transition-delay: 0.28s;
+}
+.drawer.is-open .file:nth-child(4) {
+  transition-delay: 0.32s;
+}
+.drawer.is-open .file:nth-child(5) {
+  transition-delay: 0.36s;
+}
+.drawer.is-open .file:nth-child(6) {
+  transition-delay: 0.4s;
+}
+.drawer.is-open .file:nth-child(7) {
+  transition-delay: 0.44s;
+}
+.drawer.is-open .file:nth-child(8) {
+  transition-delay: 0.48s;
+}
+.drawer.is-open .file:nth-child(9) {
+  transition-delay: 0.52s;
+}
+.drawer.is-open .file:nth-child(10) {
+  transition-delay: 0.56s;
+}
+
+.file__card {
+  position: relative;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+.file__tab {
+  padding: 3px 10px;
+  border-radius: 3px 3px 0 0;
+  background: var(--file-bg);
+  border: 1px solid var(--file-border);
+  border-bottom: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--file-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  user-select: none;
+  display: inline-block;
+}
+
+.file__body {
+  width: 100%;
+  height: 52px;
+  background: var(--file-bg);
+  border: 1px solid var(--file-border);
+  border-radius: 0 3px 3px 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.file__body::after {
+  content: "";
+  position: absolute;
+  inset: 6px 8px;
+  border-top: 1px solid var(--file-line);
+  box-shadow:
+    0 5px 0 var(--file-line),
+    0 10px 0 var(--file-line),
+    0 15px 0 var(--file-line);
+  opacity: 0.4;
+}
+
+/* ── DETAIL SECTION ── */
+
+.section-detail {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  position: relative;
+}
+
+.detail-card {
+  width: 100%;
+  max-width: 800px;
+  min-height: 500px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
+  pointer-events: none;
+}
+
+.detail-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.detail-card__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--detail-color);
+  opacity: 0.8;
+}
+
+.detail-card__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.detail-card__desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+.detail-card__files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+}
+
+.detail-card__file {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--detail-color);
+  background: color-mix(in srgb, var(--detail-color) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--detail-color) 25%, transparent);
+  border-radius: 4px;
+  padding: 3px 8px;
+  opacity: 0.85;
+}
+
+/* ── BACK BUTTON ── */
+
+.back-btn {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s,
+    transform 0.3s var(--ease-out),
+    background 0.2s;
+  z-index: 100;
+}
+
+.back-btn.is-visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+.back-btn:hover {
+  background: hsl(220, 14%, 15%);
+  border-color: hsl(220, 12%, 28%);
+}
+
+.back-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

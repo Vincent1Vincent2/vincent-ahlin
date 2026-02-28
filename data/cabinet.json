@@ -1,0 +1,383 @@
+{
+  "systems": [
+    {
+      "id": "plugin",
+      "label": "01 — Core",
+      "title": "ML Plugin",
+      "color": "hsl(210, 80%, 62%)",
+      "capabilities": [
+        {
+          "id": "content-management",
+          "name": "Content Management",
+          "desc": "Core multilingual content layer. Handles language detection, content routing, page filtering and ordering, and post state tracking across all registered languages. Every piece of content is associated with a language and connected to its translations through a relationship map.",
+          "files": [
+            "includes/misc/page_filtering.php",
+            "includes/misc/page_ordering.php",
+            "includes/misc/post_states.php",
+            "includes/misc/translation_source_tracking.php",
+            "actions/connect.php",
+            "actions/disconnect_translation.php",
+            "actions/clone_content.php",
+            "actions/clone_page.php"
+          ]
+        },
+        {
+          "id": "acf-translation",
+          "name": "ACF Field Translation",
+          "desc": "Translates arbitrarily nested ACF field structures — repeaters, flexible content blocks, and groups — without corrupting layout metadata. The traversal layer recurses through any depth of nesting, identifies translatable string fields, and writes values back while preserving row indices, field type keys, and conditional logic references.",
+          "files": [
+            "includes/acf/acf_flexible.php",
+            "includes/acf/acf_group.php",
+            "includes/acf/acf_repeater.php",
+            "includes/acf/acf_process_recursive.php",
+            "includes/acf/ML_ACF_Helper.php",
+            "includes/acf/options_duplication.php",
+            "includes/acf/options_repeater.php"
+          ]
+        },
+        {
+          "id": "auto-translation",
+          "name": "Auto Translation",
+          "desc": "Integrates with the Google Translate API to automatically generate draft translations for any supported language. Translations are written as drafts and flagged for review rather than published immediately, so editors retain control. Bulk translation allows processing multiple posts in a single operation.",
+          "files": [
+            "actions/translate_content.php",
+            "actions/bulk_copy.php",
+            "assets/js/ml_string_translations.js",
+            "includes/settings/string_translations_settings.php"
+          ]
+        },
+        {
+          "id": "menu-management",
+          "name": "Menu Management",
+          "desc": "Duplicates WordPress navigation menus per language and assigns them to language-specific menu locations. Each language can have its own independently editable menu structure. The menu filter restricts the admin menu list to the active language to reduce editor confusion.",
+          "files": [
+            "includes/menu/menu_core.php",
+            "includes/menu/menu_customizer.php",
+            "includes/menu/menu_display.php",
+            "includes/menu/menu_duplication.php",
+            "assets/js/ml_menu_duplication.js",
+            "assets/js/ml_menu_settings.js",
+            "assets/css/ml_menu_lang_filter.css"
+          ]
+        },
+        {
+          "id": "seo-permalinks",
+          "name": "SEO & Permalinks",
+          "desc": "Generates language-prefixed permalink structures and handles redirect logic so that each translation lives at its own canonical URL. Hooks into WordPress rewrite rules to avoid conflicts with existing permalink setups. Includes a dedicated SEO module for hreflang and meta handling.",
+          "files": [
+            "includes/permalinks/ML_Hook_Manager.php",
+            "includes/permalinks/ML_Permalink_Handler.php",
+            "includes/permalinks/ML_Permalink_Helpers.php",
+            "includes/permalinks/ML_Redirect_Handler.php",
+            "includes/seo/seo.php",
+            "assets/js/ml_url.js",
+            "includes/settings/url_settings.php"
+          ]
+        },
+        {
+          "id": "translator-roles",
+          "name": "Translator Roles & Access Control",
+          "desc": "Introduces a Translator user role that admins configure granularly. Each translator is restricted to specific languages — a French translator only sees and edits French content — and to specific areas of the admin UI via tab restrictions. Works hand in hand with the review workflow: translators submit work, admins approve it. Neither role can exceed its defined scope.",
+          "files": [
+            "includes/settings/user_role_settings.php",
+            "assets/js/ml_user_role_settings.js",
+            "assets/css/ml_user_role_settings.css",
+            "assets/js/ml_tab_restrictions.js",
+            "assets/css/ml_tab_restrictions.css"
+          ]
+        },
+        {
+          "id": "review-workflow",
+          "name": "Translation Review Workflow",
+          "desc": "Paired with the translator role system. When a translation is submitted it enters a pending review state rather than publishing immediately. Translators can inspect the pending translation side-by-side with the source content, then accept it (which publishes it), modify and resubmit it, or reject it with a note back to the submitter. Admins see a dedicated review page listing all pending translations across all languages, keeping quality control in one place.",
+          "files": [
+            "includes/review/review_system.php",
+            "includes/review/admin-review-page.php",
+            "assets/js/ml_review_system.js",
+            "assets/css/ml_review_system.css",
+            "includes/settings/review_settings.php"
+          ]
+        },
+        {
+          "id": "string-migrator",
+          "name": "Auto String Migrator",
+          "desc": "Scans a codebase for hardcoded strings that are not wrapped in WordPress translation functions and flags them for migration. Helps developers audit themes and plugins for i18n compliance. Detected strings can be reviewed and migrated in batch from the admin UI. Supports dynamic variable declarations and context-aware replacement to handle complex string patterns.",
+          "files": [
+            "assets/js/ml_auto_string_migrator.js",
+            "includes/settings/dynamic_variable_declaration.php",
+            "includes/settings/context_aware_replacer.php",
+            "includes/settings/token_string_scanner.php",
+            "includes/settings/token_utils.php"
+          ]
+        },
+        {
+          "id": "feature-gating",
+          "name": "Feature Gating via License Plan",
+          "desc": "All premium features are gated behind the active license plan (Free, Pro, Agency). The feature gate module checks the locally cached license response before enabling any restricted functionality. Plan limits — number of active languages, supported sites — are enforced server-side on the license server and surfaced in the plugin UI with upgrade prompts.",
+          "files": [
+            "includes/licensing/feature_gate.php",
+            "includes/licensing/license_manager.php",
+            "includes/licensing/license_validator.php",
+            "includes/licensing/license_settings.php",
+            "includes/licensing/security_helpers.php",
+            "includes/licensing/init.php"
+          ]
+        },
+        {
+          "id": "bulk-operations",
+          "name": "Bulk Operations",
+          "desc": "Lets editors perform translation actions across multiple posts simultaneously — clone, translate, connect, or delete translations in batch. Reduces repetitive admin work when setting up a multilingual site for the first time or rolling out a new language across a large content library.",
+          "files": [
+            "actions/bulk_copy.php",
+            "actions/change_language.php",
+            "actions/delete.php",
+            "admin/setup.php",
+            "assets/js/admin.js"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "server",
+      "label": "02 — Backend",
+      "title": "License Server",
+      "color": "hsl(340, 65%, 62%)",
+      "capabilities": [
+        {
+          "id": "license-validation",
+          "name": "License Validation",
+          "desc": "The core endpoint the plugin calls on every activation. Takes a license key and site URL, checks the key against the database, verifies the plan allows another active site, and returns an authorisation response. Deliberately lightweight — a single indexed query — so it adds no measurable latency to the WordPress activation flow. The plugin caches the response locally to avoid redundant round trips.",
+          "files": [
+            "src/controllers/licenseController.js",
+            "src/routes/api.js",
+            "src/middleware/auth.js",
+            "src/middleware/validation.js"
+          ]
+        },
+        {
+          "id": "activation",
+          "name": "Activation & Deactivation",
+          "desc": "Tracks every site that has activated a license key. On activation the server records the site URL and increments the active site count for that license. On deactivation it frees the slot, allowing the customer to activate elsewhere. Plan limits are enforced here — an Agency key allows more concurrent activations than a Pro or Free key.",
+          "files": [
+            "src/controllers/licenseController.js",
+            "src/controllers/customerController.js",
+            "src/routes/api.js"
+          ]
+        },
+        {
+          "id": "plan-management",
+          "name": "Plan Management",
+          "desc": "Manages Free, Pro, and Agency subscription tiers. Each plan defines the number of allowed active sites, the set of gated features, and the billing interval. Plan assignments are stored on the license record and can be upgraded or downgraded by an admin through the dashboard.",
+          "files": [
+            "src/controllers/licenseController.js",
+            "src/controllers/adminController.js",
+            "src/scripts/migrate.js",
+            "src/scripts/seed.js"
+          ]
+        },
+        {
+          "id": "stripe-webhooks",
+          "name": "Stripe Webhooks",
+          "desc": "Listens for Stripe events — payment succeeded, subscription updated, invoice paid, refund issued — and updates the corresponding license and customer records. Webhook signatures are verified before any processing. Idempotency handling prevents duplicate license provisioning if Stripe retries a delivery.",
+          "files": [
+            "src/controllers/webhookController.js",
+            "src/routes/webhooks.js",
+            "src/middleware/validation.js"
+          ]
+        },
+        {
+          "id": "jwt-auth",
+          "name": "JWT Authentication",
+          "desc": "Admin and customer API routes are protected with short-lived JWT tokens issued on login. The middleware layer validates the token signature and expiry on every protected request before the controller is reached. Tokens must be refreshed on expiry — no persistent sessions.",
+          "files": [
+            "src/middleware/auth.js",
+            "src/utils/crypto.js",
+            "src/controllers/adminController.js"
+          ]
+        },
+        {
+          "id": "rate-limiting",
+          "name": "Rate Limiting",
+          "desc": "Per-IP rate limiting on all public-facing endpoints tracked in a dedicated database table. Stricter limits apply to the admin login endpoint to resist brute force. Each limit tier is configurable and logged. The rate limits table was introduced via a versioned migration script.",
+          "files": [
+            "src/middleware/auth.js",
+            "src/scripts/create-user-rate-limits-table.js",
+            "src/utils/logger.js"
+          ]
+        },
+        {
+          "id": "postgresql",
+          "name": "PostgreSQL & Migrations",
+          "desc": "All data — licenses, customers, activations, payments, admin notes, tickets — lives in PostgreSQL. The schema evolves through named migration scripts that run in sequence. A seed script populates development environments with representative data. Each structural change has its own file, making rollbacks and audit trails straightforward.",
+          "files": [
+            "src/config/database.js",
+            "src/scripts/migrate.js",
+            "src/scripts/run-migration.js",
+            "src/scripts/seed.js",
+            "src/scripts/add-admin-notes-column.js",
+            "src/scripts/create-ticketing-tables.js",
+            "src/scripts/migrate-admin-24h-keys.js"
+          ]
+        },
+        {
+          "id": "admin-dashboard",
+          "name": "Admin Dashboard",
+          "desc": "A standalone HTML/CSS/JS admin interface served by the license server. Provides license search and management, customer lookup, usage statistics, API key generation, and a basic ticketing system. Fully separate from the customer-facing portal — access is protected by the super admin key exchange protocol.",
+          "files": [
+            "admin/dashboard.html",
+            "admin/index.html",
+            "admin/key-management.html",
+            "admin/login.html",
+            "admin/js/admin.js",
+            "admin/js/dashboard.js",
+            "admin/js/key-management.js",
+            "admin/css/admin.css",
+            "admin/css/components.css",
+            "admin/css/variables.css"
+          ]
+        },
+        {
+          "id": "super-admin-auth",
+          "name": "Super Admin Authentication",
+          "desc": "A multi-step key exchange protocol that guards the admin dashboard. Step 1: an admin logs into the Customer Portal. The portal detects the admin account and runs a server-side IP check — the request IP must be on the trusted allowlist. Step 2: if the IP is trusted, the portal calls a protected super admin endpoint on the license server. The server responds with JavaScript that the portal evaluates client-side, rendering a time-limited key in a modal window. Step 3: the admin navigates to the license server login. After supplying correct credentials and passing the IP check again, the server asks for the portal-generated key. Step 4: the keys are cross-verified between systems. On success the server issues a session token back to the portal browser tab — logging the admin into the server dashboard within that tab. Credentials alone, or a compromised portal alone, are insufficient. Both the IP trust and the live key exchange must succeed.",
+          "files": [
+            "src/controllers/superAdminController.js",
+            "src/routes/superAdmin.js",
+            "src/middleware/superAdminSecurity.js",
+            "src/middleware/auth.js",
+            "src/utils/crypto.js"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "portal",
+      "label": "03 — Portal",
+      "title": "Customer Portal",
+      "color": "hsl(150, 55%, 52%)",
+      "capabilities": [
+        {
+          "id": "license-management",
+          "name": "License Management",
+          "desc": "Customers view all their license keys, see which sites each key is activated on, and deactivate individual sites to free up slots. Data is fetched in real time from the license server — nothing is stored locally in WordPress. Each license card shows the plan tier, activation count, and current status.",
+          "files": [
+            "page-licenses.php",
+            "templates/license-card.php",
+            "assets/js/main.js"
+          ]
+        },
+        {
+          "id": "payment-history",
+          "name": "Payment History",
+          "desc": "Displays a chronological list of all payments, invoices, and refunds for the customer account. Each entry links to the corresponding Stripe invoice. Customers can initiate refund requests directly from this view, which are routed to the license server for processing.",
+          "files": [
+            "page-payments.php",
+            "templates/payment-item.php",
+            "assets/js/main.js"
+          ]
+        },
+        {
+          "id": "profile-account",
+          "name": "Profile & Account Settings",
+          "desc": "Customers update display name, email, and password here. Notification preferences — such as renewal reminders — are also managed from this page. All changes are sent to the license server via authenticated API calls and validated server-side before being committed.",
+          "files": [
+            "page-profile.php",
+            "page-home.php",
+            "functions.php",
+            "assets/js/main.js"
+          ]
+        },
+        {
+          "id": "realtime-sync",
+          "name": "Real-time Sync with License Server",
+          "desc": "The portal holds no persistent local state. Every page load fetches fresh data from the license server using session-scoped API tokens. Activation counts, plan changes, and payment events are always reflected immediately with no cache invalidation logic needed.",
+          "files": [
+            "functions.php",
+            "page-home.php",
+            "templates/dashboard-stats.php",
+            "install.php"
+          ]
+        },
+        {
+          "id": "super-admin-gateway",
+          "name": "Super Admin Gateway",
+          "desc": "When an admin account logs in, an IP check runs server-side. If the IP is on the allowlist, the portal calls the super admin endpoint on the license server. The server responds with JavaScript that the portal evaluates client-side — this displays a time-limited key in a modal. The admin uses this key as part of the cross-system key exchange to authenticate on the license server dashboard. The resulting session token is stored in the portal browser tab, completing the login without ever transmitting a persistent credential across the wire.",
+          "files": [
+            "page-home.php",
+            "functions.php",
+            "install.php",
+            "assets/js/main.js"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "site",
+      "label": "04 — Marketing",
+      "title": "Main Site",
+      "color": "hsl(45, 70%, 58%)",
+      "capabilities": [
+        {
+          "id": "stripe-checkout",
+          "name": "Stripe Checkout",
+          "desc": "Creates server-side Stripe Checkout sessions when a visitor initiates a purchase. The customer is redirected to Stripe's hosted payment page. On completion, Stripe fires a webhook back to the marketing site which validates the signature and triggers license provisioning. The full Stripe PHP SDK is bundled — Checkout, PaymentIntent, Subscription, Invoice, Refund, and Webhook objects are all wired end to end.",
+          "files": [
+            "assets/js/purchase.js",
+            "includes/stripe-php/lib/PaymentIntent.php",
+            "includes/stripe-php/lib/Webhook.php",
+            "includes/stripe-php/Service/PaymentIntentService.php",
+            "includes/stripe-php/Exception/SignatureVerificationException.php",
+            "page-pricing.php"
+          ]
+        },
+        {
+          "id": "auto-provisioning",
+          "name": "Auto License Provisioning",
+          "desc": "On a successful Stripe payment event the marketing site calls the license server to create a new customer and license record automatically. No manual steps required — the customer receives their key immediately and can activate the plugin. Duplicate webhook deliveries are handled safely so the same payment event cannot create two licenses.",
+          "files": [
+            "functions.php",
+            "includes/stripe-php/lib/Webhook.php",
+            "includes/stripe-php/Service/SubscriptionService.php"
+          ]
+        },
+        {
+          "id": "documentation-cms",
+          "name": "Documentation CMS",
+          "desc": "Documentation is managed entirely through WordPress using a custom post type (ml_docs) with a custom taxonomy (doc_category). Categories cover getting-started, configuration, advanced-features, api-reference, and troubleshooting. The install script registers all post types, taxonomies, and default pages on activation. Content is edited in the WordPress admin and rendered through a dedicated single template and taxonomy archive — fully dynamic, no static files.",
+          "files": [
+            "single-ml_docs.php",
+            "taxonomy-doc_category.php",
+            "page-documentation.php",
+            "install.php",
+            "functions.php"
+          ]
+        },
+        {
+          "id": "api-reference",
+          "name": "API Reference",
+          "desc": "API reference documentation lives inside the docs CMS as ml_docs posts under the api-reference category — endpoint descriptions, webhook payloads, request/response shapes, and authentication details are all authored in WordPress and rendered through the same single template as the rest of the docs.",
+          "files": [
+            "single-ml_docs.php",
+            "taxonomy-doc_category.php",
+            "page-documentation.php"
+          ]
+        },
+        {
+          "id": "features-pricing",
+          "name": "Features & Pricing Pages",
+          "desc": "Marketing pages for product features and plan pricing. The pricing page initiates Stripe Checkout sessions on plan selection. The site uses a modular CSS system with design tokens, a dark/light theme switcher, and a fully responsive layout built without any CSS framework — 18 CSS files covering base, components, layout, and theme layers.",
+          "files": [
+            "page-features.php",
+            "page-pricing.php",
+            "assets/css/variables.css",
+            "assets/css/dark.css",
+            "assets/css/light.css",
+            "assets/css/theme-switcher.css",
+            "assets/js/theme-switcher.js",
+            "assets/js/mobile-menu.js"
+          ]
+        }
+      ]
+    }
+  ]
+}
