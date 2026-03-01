@@ -1,0 +1,455 @@
+{
+  "nodes": [
+    {
+      "id": "plugin",
+      "label": "01 — Core",
+      "title": "ML Plugin",
+      "color": "var(--plugin)",
+      "x": 0.08,
+      "y": 0.25
+    },
+    {
+      "id": "site",
+      "label": "04 — Marketing",
+      "title": "Main Site",
+      "color": "var(--site)",
+      "x": 0.08,
+      "y": 0.62
+    },
+    {
+      "id": "portal",
+      "label": "03 — Portal",
+      "title": "Customer Portal",
+      "color": "var(--portal)",
+      "x": 0.08,
+      "y": 0.88
+    },
+    {
+      "id": "stripe",
+      "label": "External",
+      "title": "Stripe",
+      "color": "hsl(250, 70%, 65%)",
+      "x": 0.35,
+      "y": 0.75
+    },
+    {
+      "id": "server",
+      "label": "02 — Backend",
+      "title": "License Server",
+      "color": "var(--server)",
+      "x": 0.55,
+      "y": 0.42
+    },
+    {
+      "id": "admin",
+      "label": "Internal",
+      "title": "Admin UI",
+      "color": "hsl(30, 80%, 60%)",
+      "x": 0.78,
+      "y": 0.72
+    },
+    {
+      "id": "db",
+      "label": "PostgreSQL",
+      "title": "DB Cluster",
+      "color": "hsl(280, 60%, 65%)",
+      "x": 0.88,
+      "y": 0.25
+    }
+  ],
+  "connections": [
+    {
+      "from": "plugin",
+      "to": "server",
+      "label": "License validation",
+      "description": "On every WordPress activation the plugin calls the license server to validate the key, check plan limits, and confirm the site is authorised. Activation and deactivation are manual actions from the plugin settings page. The response is cached locally to avoid redundant round trips on every page load.",
+      "color": "var(--plugin)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/license/validate",
+          "auth": "none",
+          "trigger": "Activation + daily cron"
+        },
+        {
+          "method": "POST",
+          "path": "/api/license/activate",
+          "auth": "none",
+          "trigger": "Manual — settings page"
+        },
+        {
+          "method": "POST",
+          "path": "/api/license/deactivate",
+          "auth": "none",
+          "trigger": "Manual — settings page"
+        }
+      ]
+    },
+    {
+      "from": "site",
+      "to": "stripe",
+      "label": "Checkout session",
+      "description": "When a customer clicks purchase on the marketing site, the server-side PHP creates a Stripe Checkout session with the selected plan and any add-ons. The customer is redirected to Stripe's hosted payment page. Currency is detected from the request and the correct regional price IDs are used automatically.",
+      "color": "var(--site)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "Stripe Checkout Session",
+          "auth": "Stripe Secret Key",
+          "trigger": "Customer clicks purchase"
+        },
+        {
+          "method": "POST",
+          "path": "Stripe Billing Portal",
+          "auth": "Stripe Secret Key",
+          "trigger": "Customer manages subscription"
+        }
+      ]
+    },
+    {
+      "from": "site",
+      "to": "server",
+      "label": "Server-side PHP calls",
+      "description": "Before and after a purchase, the marketing site makes direct server-side PHP calls to the license server. Before checkout it verifies existing customer credentials or checks if an account already exists. After Stripe confirms payment, WordPress auto-registers the new customer and provisions their license — no manual admin steps required.",
+      "color": "var(--site)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/auth/login",
+          "auth": "Bearer API Key",
+          "trigger": "Verify existing customer before checkout"
+        },
+        {
+          "method": "GET",
+          "path": "/api/customer/profile",
+          "auth": "Bearer API Key",
+          "trigger": "Check if customer already exists"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/register",
+          "auth": "Bearer API Key",
+          "trigger": "Auto-register new customer after payment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/licenses",
+          "auth": "X-API-Key",
+          "trigger": "Auto-provision license after payment"
+        }
+      ]
+    },
+    {
+      "from": "stripe",
+      "to": "server",
+      "label": "Payment webhooks",
+      "description": "Stripe sends signed webhook events directly to the license server when payment events occur. The server verifies the signature, then provisions licenses and customer records automatically. No polling required — the entire post-purchase flow is event-driven.",
+      "color": "hsl(250, 70%, 65%)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/webhooks/stripe",
+          "auth": "X-Api-Key",
+          "trigger": "payment_intent.succeeded"
+        },
+        {
+          "method": "POST",
+          "path": "/webhooks/stripe",
+          "auth": "X-Api-Key",
+          "trigger": "customer.subscription.created"
+        },
+        {
+          "method": "POST",
+          "path": "/webhooks/stripe",
+          "auth": "X-Api-Key",
+          "trigger": "invoice.payment_succeeded"
+        }
+      ]
+    },
+    {
+      "from": "portal",
+      "to": "server",
+      "label": "Customer + support APIs",
+      "description": "All customer data lives on the license server — the portal holds no records of its own. Every page load fetches live data via authenticated API calls using short-lived JWT tokens. The support flow uses a separate 24-hour key system that can escalate to super-admin access without exposing admin credentials.",
+      "color": "var(--portal)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/auth/login",
+          "auth": "none",
+          "trigger": "Customer login"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/register",
+          "auth": "none",
+          "trigger": "Customer registration"
+        },
+        {
+          "method": "GET",
+          "path": "/api/customer/licenses",
+          "auth": "Bearer JWT",
+          "trigger": "Dashboard + licenses page"
+        },
+        {
+          "method": "GET",
+          "path": "/api/customer/payments",
+          "auth": "Bearer JWT",
+          "trigger": "Payments page load"
+        },
+        {
+          "method": "GET",
+          "path": "/api/customer/profile",
+          "auth": "Bearer JWT",
+          "trigger": "Profile page load"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/customer/change-password",
+          "auth": "Bearer JWT",
+          "trigger": "Profile update"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tickets/customer/:email",
+          "auth": "Bearer JWT",
+          "trigger": "Support page load"
+        },
+        {
+          "method": "POST",
+          "path": "/api/tickets",
+          "auth": "Bearer JWT",
+          "trigger": "Submit ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/api/support/validate-24h-key",
+          "auth": "Bearer JWT",
+          "trigger": "Enhanced support flow"
+        },
+        {
+          "method": "POST",
+          "path": "/api/support/generate-access-token",
+          "auth": "IP whitelist",
+          "trigger": "Super-admin gateway"
+        }
+      ]
+    },
+    {
+      "from": "portal",
+      "to": "admin",
+      "label": "Support escalation",
+      "description": "When a customer needs enhanced support, the portal initiates a secure escalation flow. A time-limited 24-hour key is generated and validated against the license server, granting temporary super-admin access without ever sharing permanent admin credentials with the support workflow.",
+      "color": "var(--portal)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/support/generate-access-token",
+          "auth": "IP whitelist",
+          "trigger": "Super-admin access flow"
+        },
+        {
+          "method": "POST",
+          "path": "/api/support/validate-24h-key",
+          "auth": "IP whitelist",
+          "trigger": "Enhanced support — 24h key"
+        }
+      ]
+    },
+    {
+      "from": "admin",
+      "to": "portal",
+      "label": "Support response",
+      "description": "The admin UI reads and updates customer tickets through the same API the portal uses. When a support agent updates a ticket status, the change is immediately visible to the customer on the portal. The super-admin panel is accessed via a token-in-URL pattern protected by IP whitelist.",
+      "color": "hsl(30, 80%, 60%)",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin-:tokenId",
+          "auth": "IP whitelist + token",
+          "trigger": "Super-admin panel access"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/tickets",
+          "auth": "Admin JWT",
+          "trigger": "View customer tickets"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/api/tickets/:id/status",
+          "auth": "Admin JWT",
+          "trigger": "Update ticket status"
+        }
+      ]
+    },
+    {
+      "from": "admin",
+      "to": "server",
+      "label": "Admin API",
+      "description": "The admin UI is a standalone HTML/JS dashboard that talks directly to the license server API. All license lifecycle operations — generate, update, revoke, bulk actions — go through here. Auth uses a short-lived JWT with a separate 3-hour token for sensitive operations, reducing the blast radius of a compromised session.",
+      "color": "hsl(30, 80%, 60%)",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/admin/api/login",
+          "auth": "Admin credentials",
+          "trigger": "Admin login"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/licenses",
+          "auth": "Admin JWT",
+          "trigger": "License management"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/api/licenses",
+          "auth": "Admin JWT",
+          "trigger": "Generate license"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/api/licenses/:id",
+          "auth": "Admin JWT",
+          "trigger": "Update license"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/api/licenses/:id",
+          "auth": "Admin JWT",
+          "trigger": "Revoke license"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/customers",
+          "auth": "Admin JWT",
+          "trigger": "Customer management"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/payments",
+          "auth": "Admin JWT",
+          "trigger": "Payment history"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/api/payments/:id/refund",
+          "auth": "Admin JWT",
+          "trigger": "Process refund"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/stats",
+          "auth": "Admin JWT",
+          "trigger": "Dashboard load"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/tickets",
+          "auth": "Admin JWT",
+          "trigger": "Ticket management"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/api/get-24h-key",
+          "auth": "Admin JWT",
+          "trigger": "Support key generation"
+        }
+      ]
+    },
+    {
+      "from": "server",
+      "to": "db",
+      "label": "SQL queries",
+      "description": "The license server owns its own isolated PostgreSQL database within the shared cluster. Every license operation, customer record, payment event, ticket, and site activation is persisted here. Migrations are versioned and run via scripts — no direct DB access from any other system.",
+      "color": "var(--server)",
+      "endpoints": [
+        {
+          "method": "SQL",
+          "path": "licenses",
+          "auth": "DB credentials",
+          "trigger": "License create / validate / deactivate"
+        },
+        {
+          "method": "SQL",
+          "path": "customers",
+          "auth": "DB credentials",
+          "trigger": "Register / login / profile update"
+        },
+        {
+          "method": "SQL",
+          "path": "payments",
+          "auth": "DB credentials",
+          "trigger": "Stripe webhook received"
+        },
+        {
+          "method": "SQL",
+          "path": "tickets",
+          "auth": "DB credentials",
+          "trigger": "Ticket create / update / list"
+        },
+        {
+          "method": "SQL",
+          "path": "activations",
+          "auth": "DB credentials",
+          "trigger": "Site activation / deactivation"
+        }
+      ]
+    },
+    {
+      "from": "portal",
+      "to": "db",
+      "label": "Portal DB",
+      "description": "The customer portal runs on WordPress and has its own isolated database within the shared PostgreSQL cluster. WordPress session data, user meta, and options are stored here. Customer and license records are never duplicated here — they always come from the license server API at runtime.",
+      "color": "var(--portal)",
+      "endpoints": [
+        {
+          "method": "SQL",
+          "path": "portal_sessions",
+          "auth": "DB credentials",
+          "trigger": "Session management"
+        },
+        {
+          "method": "SQL",
+          "path": "portal_user_meta",
+          "auth": "DB credentials",
+          "trigger": "WordPress user meta"
+        },
+        {
+          "method": "SQL",
+          "path": "portal_options",
+          "auth": "DB credentials",
+          "trigger": "WordPress options / settings"
+        }
+      ]
+    },
+    {
+      "from": "site",
+      "to": "db",
+      "label": "Site DB",
+      "description": "The marketing site runs on WordPress with its own isolated database in the shared PostgreSQL cluster. All content — documentation, blog posts, pricing pages — is stored here as standard WordPress posts. The Stripe PHP library and purchase logic run server-side, but no payment or customer data is ever stored in this database.",
+      "color": "var(--site)",
+      "endpoints": [
+        {
+          "method": "SQL",
+          "path": "site_posts",
+          "auth": "DB credentials",
+          "trigger": "Docs / blog / pages (WordPress)"
+        },
+        {
+          "method": "SQL",
+          "path": "site_options",
+          "auth": "DB credentials",
+          "trigger": "Site settings"
+        },
+        {
+          "method": "SQL",
+          "path": "site_usermeta",
+          "auth": "DB credentials",
+          "trigger": "User meta"
+        }
+      ]
+    }
+  ]
+}

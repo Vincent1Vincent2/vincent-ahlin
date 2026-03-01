@@ -1,11 +1,11 @@
 {
   "ecosystem": {
     "headline": "Full ownership, start to finish.",
-    "body": "No handoffs. No team to catch mistakes. Every architectural decision across four production codebases — designed, built, and deployed by one developer.",
+    "body": "No handoffs. No team to catch mistakes. Every architectural decision across four production codebases \u2014 designed, built, and deployed by one developer.",
     "points": [
       {
         "label": "Cross-stack without gaps",
-        "desc": "PHP, Node.js, PostgreSQL, REST APIs, Stripe, WordPress internals. Not a specialist who reached outside their lane — someone who works across the whole system by default."
+        "desc": "PHP, Node.js, PostgreSQL, REST APIs, Stripe, WordPress internals. Not a specialist who reached outside their lane \u2014 someone who works across the whole system by default."
       },
       {
         "label": "Production, not portfolio",
@@ -17,14 +17,14 @@
       },
       {
         "label": "Sole authorship",
-        "desc": "System architecture, backend and frontend code, database schema, Stripe integration, deployment configuration — one person, full accountability."
+        "desc": "System architecture, backend and frontend code, database schema, Stripe integration, deployment configuration \u2014 one person, full accountability."
       }
     ]
   },
   "systems": [
     {
       "id": "plugin",
-      "label": "01 — Core",
+      "label": "01 \u2014 Core",
       "title": "ML Plugin",
       "color": "var(--plugin)",
       "dimColor": "var(--plugin-dim)",
@@ -262,7 +262,7 @@
     },
     {
       "id": "server",
-      "label": "02 — Backend",
+      "label": "02 \u2014 Backend",
       "title": "License Server",
       "color": "var(--server)",
       "dimColor": "var(--server-dim)",
@@ -300,7 +300,11 @@
           "path": "/admin/js",
           "files": ["admin.js", "dashboard.js", "key-management.js", "login.js"]
         },
-        { "name": "src", "path": "/src", "files": ["app.js"] },
+        {
+          "name": "src",
+          "path": "/src",
+          "files": ["app.js"]
+        },
         {
           "name": "src/config",
           "path": "/src/config",
@@ -355,7 +359,7 @@
     },
     {
       "id": "portal",
-      "label": "03 — Portal",
+      "label": "03 \u2014 Portal",
       "title": "Customer Portal",
       "color": "var(--portal)",
       "dimColor": "var(--portal-dim)",
@@ -381,7 +385,11 @@
             "style.css"
           ]
         },
-        { "name": "assets/js", "path": "/assets/js", "files": ["main.js"] },
+        {
+          "name": "assets/js",
+          "path": "/assets/js",
+          "files": ["main.js"]
+        },
         {
           "name": "templates",
           "path": "/templates",
@@ -395,7 +403,7 @@
     },
     {
       "id": "site",
-      "label": "04 — Marketing",
+      "label": "04 \u2014 Marketing",
       "title": "Main Site",
       "color": "var(--site)",
       "dimColor": "var(--site-dim)",
@@ -532,40 +540,6 @@
           ]
         }
       ]
-    }
-  ],
-  "flows": [
-    {
-      "from": "plugin",
-      "to": "server",
-      "color": "hsl(210, 80%, 62%)",
-      "delay": "0s",
-      "label": "license validation",
-      "description": "On every activation the plugin calls the license server to validate the key, check plan limits, and confirm the site is authorised. The response is cached locally to avoid redundant round trips."
-    },
-    {
-      "from": "server",
-      "to": "portal",
-      "color": "hsl(340,70%,62%)",
-      "delay": "0.8s",
-      "label": "user data",
-      "description": "Customer and license records live on the server. The portal fetches them in real time via authenticated API calls — no data is stored in WordPress. Session tokens are scoped per installation."
-    },
-    {
-      "from": "site",
-      "to": "server",
-      "color": "hsl(45,85%,58%)",
-      "delay": "1.6s",
-      "label": "purchase → key",
-      "description": "A purchase on the marketing site triggers a Stripe Checkout session. When payment completes, the webhook hits the server which provisions a new license and customer record automatically — no manual steps."
-    },
-    {
-      "from": "portal",
-      "to": "plugin",
-      "color": "hsl(150,60%,52%)",
-      "delay": "2.4s",
-      "label": "key sync",
-      "description": "Customers retrieve their license key from the portal and enter it into the plugin settings. The plugin then opens a direct validation channel with the server to activate the site."
     }
   ]
 }

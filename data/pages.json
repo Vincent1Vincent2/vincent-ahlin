@@ -28,10 +28,11 @@
       { "id": "role", "label": "Role", "color": "var(--site)" }
     ],
     "ecosystem": [
-      { "id": "ecosystem", "label": "Ecosystem", "color": "var(--plugin)" },
-      { "id": "flow", "label": "Data Flow", "color": "var(--portal)" }
+      { "id": "api", "label": "API Surface", "color": "var(--server)" },
+      { "id": "flow", "label": "Data Flow", "color": "var(--portal)" },
+      { "id": "ecosystem", "label": "File Structure", "color": "var(--plugin)" }
     ],
-    "capability": [
+    "capability-cabinet": [
       {
         "id": "capabilities-cabinet",
         "label": "Capabilities",
