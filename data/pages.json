@@ -28,9 +28,11 @@
       { "id": "role", "label": "Role", "color": "var(--site)" }
     ],
     "ecosystem": [
-      { "id": "api", "label": "API Surface", "color": "var(--server)" },
-      { "id": "flow", "label": "Data Flow", "color": "var(--portal)" },
-      { "id": "ecosystem", "label": "File Structure", "color": "var(--plugin)" }
+      {
+        "id": "api",
+        "label": "API Surface",
+        "color": "var(--server)"
+      }
     ],
     "capability-cabinet": [
       {

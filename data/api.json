@@ -5,23 +5,23 @@
       "label": "01 — Core",
       "title": "ML Plugin",
       "color": "var(--plugin)",
-      "x": 0.08,
-      "y": 0.25
+      "x": 0.28,
+      "y": 0.15
     },
     {
       "id": "site",
       "label": "04 — Marketing",
       "title": "Main Site",
       "color": "var(--site)",
-      "x": 0.08,
-      "y": 0.62
+      "x": 0.24,
+      "y": 0.52
     },
     {
       "id": "portal",
       "label": "03 — Portal",
       "title": "Customer Portal",
       "color": "var(--portal)",
-      "x": 0.08,
+      "x": 0.26,
       "y": 0.88
     },
     {
@@ -29,7 +29,7 @@
       "label": "External",
       "title": "Stripe",
       "color": "hsl(250, 70%, 65%)",
-      "x": 0.35,
+      "x": 0.5,
       "y": 0.75
     },
     {
@@ -38,14 +38,14 @@
       "title": "License Server",
       "color": "var(--server)",
       "x": 0.55,
-      "y": 0.42
+      "y": 0.3
     },
     {
       "id": "admin",
       "label": "Internal",
       "title": "Admin UI",
       "color": "hsl(30, 80%, 60%)",
-      "x": 0.78,
+      "x": 0.8,
       "y": 0.72
     },
     {
@@ -53,8 +53,8 @@
       "label": "PostgreSQL",
       "title": "DB Cluster",
       "color": "hsl(280, 60%, 65%)",
-      "x": 0.88,
-      "y": 0.25
+      "x": 0.78,
+      "y": 0.1
     }
   ],
   "connections": [
