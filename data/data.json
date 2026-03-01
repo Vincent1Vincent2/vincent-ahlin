@@ -677,13 +677,14 @@
 
   "meta": {
     "project": "MultiLang",
-    "tagline": "A complete multilingual SaaS ecosystem — plugin, payments, licensing, and customer portal — built solo from the ground up.",
+    "tagline": "Four connected systems: WordPress plugin, Node.js license server, marketing site with Stripe + docs, and customer portal — clear API contracts and automated doc install.",
     "role": "Solo Developer",
     "stats": [
       { "value": "4", "label": "Systems" },
-      { "value": "150+", "label": "Files" },
-      { "value": "50+", "label": "Languages" },
-      { "value": "3", "label": "Plans" }
+      { "value": "77", "label": "Endpoints" },
+      { "value": "3", "label": "DBs · 1 cluster" },
+      { "value": "2× faster", "label": "Bulk & single vs Polylang" },
+      { "value": "50+", "label": "Languages" }
     ]
   },
 
@@ -734,23 +735,23 @@
 
   "overview": {
     "heading": "What is MultiLang?",
-    "body": "MultiLang is a complete SaaS product designed, built, and deployed end-to-end by a single developer. It is a multilingual content management solution for WordPress, sold as a subscription-based plugin with a self-contained business infrastructure around it.",
+    "body": "MultiLang is a multilingual WordPress plugin sold as a subscription, with a full business stack around it. The plugin validates and activates licenses against a Node.js license server (ml). The marketing site runs Stripe Checkout; when payment is accepted and the customer is new, the marketing site creates the user on the license server (POST /api/auth/register) and provisions the license (POST /api/licenses). Existing customers get a new license only. The customer portal talks to the license server for auth, licenses, payments, and support tickets. The marketing theme also ships a documentation structure: custom post type, categories, and an automatic install that creates default pages, doc categories, and initial documentation content on theme activation.",
     "systems": [
       {
         "id": "plugin",
         "num": "01",
         "title": "WordPress Plugin",
         "color": "var(--plugin)",
-        "summary": "The core product. Handles all multilingual logic on the customer's site — language detection, content routing, translation storage, ACF field traversal, menu duplication, and front page handling.",
-        "detail": "Exposes a public API surface via WordPress hooks and helper functions. All user-facing strings are fully internationalized. Supports bulk translation, automatic Google Translate integration, and a string migration tool that scans codebases for unwrapped text."
+        "summary": "The core product. Broad scope: 8 action handlers (clone, connect, translate, bulk copy, disconnect), admin & onboarding, full ACF support (flexible, repeater, group, options), licensing, menu system (core, customizer, duplication), permalinks, front page, review system, SEO, and settings for language, URL, menu, full-site translation, relationship mapping, strings, user roles, and source tracking. Admin and actions use AJAX throughout.",
+        "detail": "Actions layer (8 handlers): bulk_copy, change_language, clone_content, clone_page, connect, delete, disconnect_translation, translate_content. Includes: ACF (flexible content, repeater, group, options), licensing (feature gate, validator, manager), menu (core, customizer, display, duplication), permalinks (hook manager, handler, redirects), front page and page ordering, post states, review system, SEO, translation source tracking, language transition handler. Settings cover language, URL, menu, full-site translation, relationship mapping, review, source tracking, string translations (with auto-migrator and words-to-ignore), user roles, and dynamic variable declaration. Admin and settings UIs use AJAX throughout for license actions, translations, and settings updates. All user-facing strings are internationalized; supports bulk translation and Google Translate. 80+ flag assets, dedicated CSS/JS per surface."
       },
       {
         "id": "server",
         "num": "02",
         "title": "License Server",
         "color": "var(--server)",
-        "summary": "The backbone of the business logic. A Node.js REST API backed by PostgreSQL that handles all license lifecycle management — validation, activation tracking, and customer records.",
-        "detail": "Validates license keys on every plugin activation, tracks site activations against plan limits, stores customer and payment records, and serves as the single source of truth. Exposes an admin interface with dashboard, license generation, and customer management tools."
+        "summary": "The backbone of the business logic. A Node.js REST API backed by one PostgreSQL cluster (3 databases); Helmet for security headers, Express rate limiting on endpoints; handles license validation, activation tracking, customer records, Stripe webhooks, and admin/ticketing.",
+        "detail": "Validates license keys on every plugin activation, tracks site activations against plan limits, stores customer and payment records, and serves as the single source of truth. Uses Helmet for security headers and Express rate limiting on API endpoints. Exposes an admin interface with dashboard, license generation, and customer management tools."
       },
       {
         "id": "portal",
@@ -765,8 +766,8 @@
         "num": "04",
         "title": "Marketing Site",
         "color": "var(--site)",
-        "summary": "The public-facing entry point for purchases. Handles product presentation, pricing, and the complete Stripe Checkout flow — from session creation to webhook handling and license provisioning.",
-        "detail": "When a visitor purchases, the theme creates a Stripe Checkout session server-side, redirects to Stripe's hosted payment page, and listens for webhook events. On successful payment it communicates with the license server to provision a new license automatically — no manual steps."
+        "summary": "Public entry point for purchases plus built-in documentation. Stripe Checkout; on payment success the theme creates new customers and licenses on the license server via direct API calls. Theme includes a full doc structure with auto-install.",
+        "detail": "Creates Stripe Checkout sessions and redirects to Stripe. When checkout completes, the theme runs handle_checkout_session_completed: for new customers it calls the license server (POST /api/auth/register, then POST /api/licenses); for existing customers it only creates the license. So the marketing site does call the license API directly to create users and licenses after payment. The theme also provides a documentation system: custom post type (ml_docs), categories, and install.php that on theme activation creates default pages, doc categories, and initial documentation content."
       }
     ]
   },
@@ -778,13 +779,13 @@
         "system": "Plugin",
         "color": "var(--plugin)",
         "front": "PHP 7.4+ · WordPress",
-        "back": "WordPress APIs (hooks, options, REST, menus), ACF integration for repeaters and flexible content, Google Translate API, full i18n with translatable strings."
+        "back": "WordPress APIs (hooks, options, REST, menus), AJAX throughout for admin and actions (license, translate, settings). ACF integration for repeaters and flexible content, Google Translate API, full i18n with translatable strings."
       },
       {
         "system": "License Server",
         "color": "var(--server)",
         "front": "Node.js · PostgreSQL",
-        "back": "Express.js, PostgreSQL 12 with versioned migrations, JWT authentication, Joi validation, Helmet + CORS + rate limiting, Stripe Webhook handling, npm test suite."
+        "back": "Express.js, one PostgreSQL cluster (3 databases), Helmet for security headers, Express rate limiting, JWT auth, Stripe webhook handling (payment_intent, invoice, subscription events), admin UI, customer and ticket APIs, CORS."
       },
       {
         "system": "Customer Portal",
@@ -796,7 +797,7 @@
         "system": "Marketing Site",
         "color": "var(--site)",
         "front": "PHP · Stripe SDK",
-        "back": "WordPress theme, Stripe PHP SDK (Checkout Sessions, Webhooks, Subscriptions, Invoices, Refunds), vanilla JS, modular CSS with design tokens and theme switcher."
+        "back": "WordPress theme, Stripe PHP SDK (Checkout Sessions only; webhooks live on license server). Documentation: ml_docs CPT, doc_category taxonomy, install.php auto-creates pages, categories, and initial docs on theme activation. Vanilla JS, modular CSS, theme switcher."
       },
       {
         "system": "Shared Infra",
@@ -814,8 +815,8 @@
         "num": "01",
         "title": "End-to-end payment provisioning",
         "color": "var(--plugin)",
-        "summary": "Connecting a Stripe payment event to a fully provisioned license across three systems.",
-        "detail": "The marketing site catches the Stripe webhook, validates the signature, then calls the license server to create a customer and license record. The portal must be immediately usable for the new customer. Getting this reliable required careful webhook validation, idempotency handling, and clear API contracts between systems so a duplicate webhook event never creates duplicate licenses."
+        "summary": "Connecting a Stripe payment event to a fully provisioned license across systems.",
+        "detail": "Stripe sends webhooks to the license server (POST /webhooks/stripe); the marketing site only creates Checkout sessions and redirects. The license server validates the webhook, creates or updates customer and license records, and the portal is immediately usable. Reliable flow required webhook validation, idempotency, and clear API contracts so duplicate events never create duplicate licenses."
       },
       {
         "num": "02",
@@ -878,8 +879,8 @@
     "body": "Every part of this product was designed, built, and deployed by me. That includes architecture decisions across all four systems, all backend and frontend code, database schema design, Stripe integration, inter-service authentication, deployment configuration, and ongoing maintenance.",
     "lines": [
       "System architecture across 4 codebases",
-      "PHP plugin development with WordPress APIs",
-      "Node.js REST API with PostgreSQL",
+      "PHP plugin development with WordPress APIs, AJAX throughout admin and actions",
+      "Node.js REST API with PostgreSQL, Helmet, Express rate limiting",
       "Two custom WordPress themes",
       "Full Stripe payment integration",
       "Database schema design and migrations",

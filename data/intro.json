@@ -1,35 +1,37 @@
 {
   "meta": {
     "project": "MultiLang",
-    "tagline": "A complete multilingual SaaS ecosystem — plugin, payments, licensing, and customer portal — built solo from the ground up.",
+    "tagline": "Four connected systems: WordPress plugin, Node.js license server, marketing site with Stripe + docs, and customer portal — clear API contracts and automated doc install.",
     "role": "Solo Developer",
     "stats": [
       { "value": "4", "label": "Systems" },
-      { "value": "150+", "label": "Files" },
-      { "value": "50+", "label": "Languages" },
-      { "value": "3", "label": "Plans" }
+      { "value": "77", "label": "Endpoints" },
+      { "value": "3", "label": "DBs · 1 cluster" },
+      { "value": "2× faster", "label": "Bulk & single vs Polylang" },
+      { "value": "50+", "label": "Languages" }
     ]
   },
 
   "overview": {
     "heading": "What is MultiLang?",
-    "body": "MultiLang is a complete SaaS product designed, built, and deployed end-to-end by a single developer. It is a multilingual content management solution for WordPress, sold as a subscription-based plugin with a self-contained business infrastructure around it.",
+    "intro": "MultiLang is a multilingual WordPress plugin sold as a subscription, with four connected systems: plugin, license server, marketing site, and customer portal. The cards below summarise each.",
+    "body": "The plugin validates and activates against the license server (ml). The marketing site runs Stripe Checkout and, on payment, creates new customers and licenses via the server API. The portal handles auth, licenses, payments, and support. The marketing theme ships a documentation structure with auto-install.",
     "systems": [
       {
         "id": "plugin",
         "num": "01",
         "title": "WordPress Plugin",
         "color": "var(--plugin)",
-        "summary": "The core product. Handles all multilingual logic on the customer's site — language detection, content routing, translation storage, ACF field traversal, menu duplication, and front page handling.",
-        "detail": "Exposes a public API surface via WordPress hooks and helper functions. All user-facing strings are fully internationalized. Supports bulk translation, automatic Google Translate integration, and a string migration tool that scans codebases for unwrapped text."
+        "summary": "The core product. 8 action handlers, admin & onboarding, full ACF (flexible, repeater, group), licensing, menu system, permalinks, front page, review, SEO. Settings for language, URL, menu, full-site translation, relationship mapping, strings, roles. AJAX throughout.",
+        "detail": "Actions: bulk_copy, change_language, clone_content, clone_page, connect, delete, disconnect_translation, translate_content. ACF, licensing, menu (core, customizer, duplication), permalinks, front page, review, SEO, source tracking, string translations (auto-migrator, words-to-ignore), user roles. AJAX for license, translate, settings. i18n, bulk translation, Google Translate. 80+ flag assets."
       },
       {
         "id": "server",
         "num": "02",
         "title": "License Server",
         "color": "var(--server)",
-        "summary": "The backbone of the business logic. A Node.js REST API backed by PostgreSQL that handles all license lifecycle management — validation, activation tracking, and customer records.",
-        "detail": "Validates license keys on every plugin activation, tracks site activations against plan limits, stores customer and payment records, and serves as the single source of truth. Exposes an admin interface with dashboard, license generation, and customer management tools."
+        "summary": "Node.js REST API, one PostgreSQL cluster (3 DBs). Helmet, Express rate limiting. License validation, activations, customers, Stripe webhooks, admin/ticketing.",
+        "detail": "Validates keys on plugin activation, tracks activations, stores customers and payments. Helmet + rate limiting. Admin UI: dashboard, license generation, customer management."
       },
       {
         "id": "portal",
@@ -44,8 +46,8 @@
         "num": "04",
         "title": "Marketing Site",
         "color": "var(--site)",
-        "summary": "The public-facing entry point for purchases. Handles product presentation, pricing, and the complete Stripe Checkout flow — from session creation to webhook handling and license provisioning.",
-        "detail": "When a visitor purchases, the theme creates a Stripe Checkout session server-side, redirects to Stripe's hosted payment page, and listens for webhook events. On successful payment it communicates with the license server to provision a new license automatically — no manual steps."
+        "summary": "Public entry for purchases + built-in docs. Stripe Checkout; on payment the theme creates new customers and licenses via license server API. Doc structure with auto-install.",
+        "detail": "Checkout sessions → Stripe. On completion: new customers → POST /api/auth/register + POST /api/licenses; existing → license only. Docs: ml_docs CPT, categories, install.php creates default pages and content on theme activation."
       }
     ]
   },
@@ -57,13 +59,13 @@
         "system": "Plugin",
         "color": "var(--plugin)",
         "front": "PHP 7.4+ · WordPress",
-        "back": "WordPress APIs (hooks, options, REST, menus), ACF integration for repeaters and flexible content, Google Translate API, full i18n with translatable strings."
+        "back": "WordPress APIs (hooks, options, REST, menus), AJAX throughout for admin and actions (license, translate, settings). ACF integration for repeaters and flexible content, Google Translate API, full i18n with translatable strings."
       },
       {
         "system": "License Server",
         "color": "var(--server)",
         "front": "Node.js · PostgreSQL",
-        "back": "Express.js, PostgreSQL 12 with versioned migrations, JWT authentication, Joi validation, Helmet + CORS + rate limiting, Stripe Webhook handling, npm test suite."
+        "back": "Express.js, one PostgreSQL cluster (3 databases), Helmet for security headers, Express rate limiting, JWT auth, Stripe webhook handling (payment_intent, invoice, subscription events), admin UI, customer and ticket APIs, CORS."
       },
       {
         "system": "Customer Portal",
@@ -75,7 +77,7 @@
         "system": "Marketing Site",
         "color": "var(--site)",
         "front": "PHP · Stripe SDK",
-        "back": "WordPress theme, Stripe PHP SDK (Checkout Sessions, Webhooks, Subscriptions, Invoices, Refunds), vanilla JS, modular CSS with design tokens and theme switcher."
+        "back": "WordPress theme, Stripe PHP SDK (Checkout Sessions only; webhooks live on license server). Documentation: ml_docs CPT, doc_category taxonomy, install.php auto-creates pages, categories, and initial docs on theme activation. Vanilla JS, modular CSS, theme switcher."
       },
       {
         "system": "Shared Infra",
@@ -88,13 +90,15 @@
 
   "challenges": {
     "heading": "Key Technical Challenges",
+    "intro": "Main technical challenges solved across the four systems.",
+    "description": "Each card summarises the problem and the approach; flip for the full story.",
     "items": [
       {
         "num": "01",
         "title": "End-to-end payment provisioning",
         "color": "var(--plugin)",
-        "summary": "Connecting a Stripe payment event to a fully provisioned license across three systems.",
-        "detail": "The marketing site catches the Stripe webhook, validates the signature, then calls the license server to create a customer and license record. The portal must be immediately usable for the new customer. Getting this reliable required careful webhook validation, idempotency handling, and clear API contracts between systems so a duplicate webhook event never creates duplicate licenses."
+        "summary": "Connecting a Stripe payment event to a fully provisioned license across systems.",
+        "detail": "Stripe sends webhooks to the license server (POST /webhooks/stripe); the marketing site only creates Checkout sessions and redirects. The license server validates the webhook, creates or updates customer and license records, and the portal is immediately usable. Reliable flow required webhook validation, idempotency, and clear API contracts so duplicate events never create duplicate licenses."
       },
       {
         "num": "02",
@@ -122,6 +126,7 @@
 
   "business": {
     "heading": "Business Features",
+    "intro": "Business-facing features across the four systems.",
     "items": [
       {
         "title": "Tiered Plans",
@@ -153,17 +158,29 @@
 
   "role": {
     "heading": "Role",
+    "intro": "Every part of this product was designed, built, and deployed by me — architecture across four systems, backend and frontend, database schema, Stripe, auth, deployment, and maintenance.",
     "title": "Solo Developer",
-    "body": "Every part of this product was designed, built, and deployed by me. That includes architecture decisions across all four systems, all backend and frontend code, database schema design, Stripe integration, inter-service authentication, deployment configuration, and ongoing maintenance.",
+    "body": "Architecture decisions across all four systems, all code, database schema design, Stripe integration, inter-service authentication, deployment configuration, and ongoing maintenance.",
     "lines": [
       "System architecture across 4 codebases",
-      "PHP plugin development with WordPress APIs",
-      "Node.js REST API with PostgreSQL",
+      "PHP plugin development with WordPress APIs, AJAX throughout admin and actions",
+      "Node.js REST API with PostgreSQL, Helmet, Express rate limiting",
       "Two custom WordPress themes",
       "Full Stripe payment integration",
       "Database schema design and migrations",
       "Inter-service authentication design",
       "Deployment and infrastructure"
+    ]
+  },
+
+  "deployment": {
+    "heading": "Deployment",
+    "intro": "Multi-provider setup: license server on GCP with GitHub Actions; marketing site and portal on DigitalOcean with GitHub Actions; DNS and domains managed separately.",
+    "items": [
+      { "label": "License server", "where": "GCP", "detail": "Procfile, GitHub Actions" },
+      { "label": "Marketing & Portal", "where": "DigitalOcean", "detail": "GitHub Actions connected" },
+      { "label": "DNS", "where": "DigitalOcean", "detail": "" },
+      { "label": "Domains / URLs", "where": "GoDaddy", "detail": "All URLs except server" }
     ]
   }
 }

@@ -1,45 +1,23 @@
 {
   "pages": [
-    {
-      "id": "intro",
-      "label": "Intro",
-      "href": "intro.html",
-      "color": "var(--text)"
-    },
-    {
-      "id": "ecosystem",
-      "label": "Ecosystem",
-      "href": "index.html",
-      "color": "var(--plugin)"
-    },
-    {
-      "id": "capability-cabinet",
-      "label": "Capability",
-      "href": "capability-cabinet.html",
-      "color": "var(--server)"
-    }
+    { "id": "intro", "label": "Intro", "href": "intro.html", "color": "var(--text)" },
+    { "id": "ecosystem", "label": "Ecosystem", "href": "index.html", "color": "var(--plugin)" },
+    { "id": "capability-cabinet", "label": "Capability", "href": "capability-cabinet.html", "color": "var(--server)" }
   ],
   "sections": {
     "intro": [
       { "id": "overview", "label": "Overview", "color": "var(--text)" },
-      { "id": "stack", "label": "Stack", "color": "var(--plugin)" },
       { "id": "challenges", "label": "Challenges", "color": "var(--server)" },
+      { "id": "role", "label": "Role", "color": "var(--site)" },
+      { "id": "stack", "label": "Stack", "color": "var(--plugin)" },
       { "id": "business", "label": "Business", "color": "var(--portal)" },
-      { "id": "role", "label": "Role", "color": "var(--site)" }
+      { "id": "deployment", "label": "Deployment", "color": "var(--muted)" }
     ],
     "ecosystem": [
-      {
-        "id": "api",
-        "label": "API Surface",
-        "color": "var(--server)"
-      }
+      { "id": "api", "label": "API Surface", "color": "var(--server)" }
     ],
     "capability-cabinet": [
-      {
-        "id": "capabilities-cabinet",
-        "label": "Capabilities",
-        "color": "var(--server)"
-      },
+      { "id": "capabilities-cabinet", "label": "Capabilities", "color": "var(--server)" },
       { "id": "architecture", "label": "Architecture", "color": "var(--site)" }
     ]
   }
