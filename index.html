@@ -19,47 +19,32 @@
     <!-- filled by nav.js -->
   </nav>
 
-  <div class="scroll-container" id="scroll-container">
+  <!-- ── SECTION 1: API NETWORK ───────────────────────────────────────── -->
+  <section class="section-stage" id="api">
+    <div class="hero__fixed">
+      <h1 class="hero__title">Endpoint station</h1>
+      <p class="hero__desc">Click a system to explore its API connections. Each line is a real endpoint in production.
+      </p>
+    </div>
+    <div id="api-detail" class="api-detail">
+      <!-- filled by api.js -->
+    </div>
+  </section>
 
-    <!-- ── SECTION 1: API NETWORK ───────────────────────────────────────── -->
-    <section class="scroll-section" id="api">
-      <div class="intro-section__inner intro-section__inner--full">
-        <div class="section-label">API surface</div>
-        <div class="api-intro">
-          <h2 class="api-intro__headline">Every connection, mapped</h2>
-          <p class="api-intro__body">Click a system to explore its API connections. Each line is a real endpoint in
-            production.</p>
-        </div>
-        <div id="api-detail" class="api-detail">
-          <!-- filled by api.js -->
-        </div>
-      </div>
-    </section>
+  <!-- ── SECTION 2: DATA FLOW ─────────────────────────────────────────── -->
+  <section class="section-detail" id="section-detail">
+    <div class="detail-card" id="detail-card">
+      <!-- filled by flow.js via api.js discover -->
+    </div>
+  </section>
 
-    <!-- ── SECTION 2: DATA FLOW ─────────────────────────────────────────── -->
-    <section class="scroll-section" id="flow">
-      <div class="intro-section__inner">
-        <div class="section-label">Data flow</div>
-        <div class="flow-intro">
-          <h2 class="flow-intro__headline">Seamless collaboration</h2>
-          <p class="flow-intro__body">Every production system looks different but needs to connect to one another
-            seamlessly.</p>
-        </div>
-        <div id="flow-detail">
-          <!-- filled by flow.js -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ── SECTION 3: FILE STRUCTURE ────────────────────────────────────── -->
-    <section class="scroll-section" id="ecosystem">
-      <div class="grid grid--2x2" id="canvas">
-        <!-- filled by main.js -->
-      </div>
-      <svg id="flow-svg"></svg>
-    </section>
-
-  </div>
+  <!-- ── SECTION 3: FILE STRUCTURE ────────────────────────────────────── 
+  <section class="scroll-section" id="ecosystem">
+    <div class="grid grid--2x2" id="canvas">
+      filled by main.js
+    </div>
+    <svg id="flow-svg"></svg>
+  </section> -->
 
   <div class="tooltip" id="tooltip">
     <div class="tooltip__path" id="tt-path"></div>
@@ -67,9 +52,15 @@
     <div class="tooltip__files">Files: <span id="tt-files"></span></div>
   </div>
 
-  <nav class="nav-bar" id="nav-bar" aria-label="Section navigation">
-    <!-- filled by nav.js -->
-  </nav>
+  <!-- BACK BUTTON -->
+  <button class="back-btn" id="back-btn">
+    <svg viewBox="0 0 24 24">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+    Back
+  </button>
+
+
 
   <script src="javascript/nav.js"></script>
   <script src="javascript/main.js"></script>
