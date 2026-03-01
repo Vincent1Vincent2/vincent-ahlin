@@ -26,20 +26,45 @@ const Cabinet = (() => {
 
   // ── DETAIL ─────────────────────────────────────────────────────────────────
 
-  function openDetail(sys, cap) {
+  function openDetail(sys, cap, startIdx = 0) {
     const card = document.getElementById("detail-card");
     const btn = document.getElementById("back-btn");
 
-    card.style.setProperty("--detail-color", sys.color);
+    const caps = sys.capabilities;
+    let capIdx = startIdx;
 
-    card.innerHTML = `
-      <div class="detail-card__label">${sys.label}</div>
-      <div class="detail-card__title">${cap.name}</div>
-      <div class="detail-card__desc">${cap.desc}</div>
-      <div class="detail-card__files">
-        ${cap.files.map((f) => `<span class="detail-card__file">${f}</span>`).join("")}
-      </div>
-    `;
+    function renderCap() {
+      const current = caps[capIdx];
+      card.style.setProperty("--detail-color", sys.color);
+
+      card.innerHTML = `
+        <div class="detail-card__label">${sys.label}</div>
+        <div class="detail-card__title">${current.name}</div>
+        <div class="detail-card__desc">${current.desc}</div>
+        <div class="detail-card__files">
+          ${current.files.map((f) => `<span class="detail-card__file">${f}</span>`).join("")}
+        </div>
+        <div class="detail-card__file-nav">
+          <button class="detail-card__nav-btn" id="cap-prev">← Prev</button>
+          <span class="detail-card__nav-count">${capIdx + 1} / ${caps.length}</span>
+          <button class="detail-card__nav-btn" id="cap-next">Next →</button>
+        </div>
+      `;
+
+      card.querySelector("#cap-prev").disabled = capIdx === 0;
+      card.querySelector("#cap-next").disabled = capIdx === caps.length - 1;
+
+      card.querySelector("#cap-prev").addEventListener("click", () => {
+        capIdx--;
+        renderCap();
+      });
+      card.querySelector("#cap-next").addEventListener("click", () => {
+        capIdx++;
+        renderCap();
+      });
+    }
+
+    renderCap();
 
     document
       .getElementById("section-detail")
@@ -65,7 +90,7 @@ const Cabinet = (() => {
 
   // ── FILE CARD ───────────────────────────────────────────────────────────────
 
-  function buildFile(sys, cap, index) {
+  function buildFile(sys, cap, capIdx) {
     const file = document.createElement("div");
     file.className = "file";
     file.style.setProperty("--file-bg", alpha(sys.color, 0.08));
@@ -75,7 +100,7 @@ const Cabinet = (() => {
     file.style.setProperty("--file-border-hover", alpha(sys.color, 0.75));
     file.style.setProperty("--file-bg-hover", alpha("hsl(0deg, 0%, 0%)", 0.5));
 
-    const zOffset = -(index * FILE_SPACING + 10);
+    const zOffset = -(capIdx * FILE_SPACING + 10);
     file.style.setProperty("--file-z", `${zOffset}px`);
     file.style.transform = `translateY(-50%) translateZ(${zOffset}px)`;
 
@@ -88,7 +113,7 @@ const Cabinet = (() => {
 
     file.addEventListener("click", (e) => {
       e.stopPropagation();
-      openDetail(sys, cap);
+      openDetail(sys, cap, capIdx);
     });
 
     return file;

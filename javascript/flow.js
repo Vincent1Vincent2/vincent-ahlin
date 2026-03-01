@@ -107,17 +107,6 @@ const Flow = (() => {
     const layout = document.createElement("div");
     layout.className = "flow-diagram";
 
-    // Back button
-    const backBtn = document.createElement("button");
-    backBtn.className = "flow-back-btn";
-    backBtn.innerHTML = `← Back to API map`;
-    backBtn.addEventListener("click", () => {
-      const sc = document.getElementById("scroll-container");
-      const api = document.getElementById("api");
-      if (sc && api) sc.scrollTo({ top: api.offsetTop, behavior: "smooth" });
-    });
-    layout.appendChild(backBtn);
-
     // Map
     mapWrap = document.createElement("div");
     mapWrap.className = "flow-diagram__map flow-diagram__map--dynamic";
@@ -414,7 +403,7 @@ const Flow = (() => {
     window.addEventListener("api:discover-flow", (e) => {
       contextNodeId = e.detail.nodeId;
       activeConnIdx = 0;
-      const container = document.getElementById("flow-detail");
+      const container = document.getElementById("detail-card");
       if (container) build(container);
     });
   }
@@ -422,7 +411,7 @@ const Flow = (() => {
   // ── INIT ──────────────────────────────────────────────────────────────────
 
   async function init() {
-    const container = document.getElementById("flow-detail");
+    const container = document.getElementById("detail-card");
     if (!container) return;
 
     await fetchData();
@@ -430,7 +419,7 @@ const Flow = (() => {
     listenForContext();
 
     window.addEventListener("resize", () => {
-      const c = document.getElementById("flow-detail");
+      const c = document.getElementById("detail-card");
       if (c) build(c);
     });
   }

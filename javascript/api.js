@@ -1,7 +1,7 @@
 // ── API MAP ───────────────────────────────────────────────────────────────────
 // 7 node bubbles connected by curved bezier paths.
 // Clicking a bubble locks a floating card. The card has a "Discover flow →"
-// button that scrolls to the #flow section and emits a custom event so
+// button that scrolls to #section-detail and emits a custom event so
 // flow.js can highlight the relevant connections.
 
 const ApiMap = (() => {
@@ -66,8 +66,8 @@ const ApiMap = (() => {
 
   function edgePoint(cx, cy, angle) {
     return {
-      x: cx + Math.cos(angle) * (PARENT_R + 4),
-      y: cy + Math.sin(angle) * (PARENT_R + 4),
+      x: cx + Math.cos(angle) * PARENT_R,
+      y: cy + Math.sin(angle) * PARENT_R,
     };
   }
 
@@ -84,6 +84,34 @@ const ApiMap = (() => {
     const cx = mx + px * bow;
     const cy = my + py * bow;
     return `M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`;
+  }
+
+  // ── DETAIL ─────────────────────────────────────────────────────────────────
+
+  function openDetail() {
+    const card = document.getElementById("detail-card");
+    const btn = document.getElementById("back-btn");
+
+    document
+      .getElementById("section-detail")
+      .scrollIntoView({ behavior: "smooth" });
+
+    setTimeout(() => {
+      card.classList.add("is-visible");
+      btn.classList.add("is-visible");
+    }, 400);
+  }
+
+  function closeDetail() {
+    const card = document.getElementById("detail-card");
+    const btn = document.getElementById("back-btn");
+
+    card.classList.remove("is-visible");
+    btn.classList.remove("is-visible");
+
+    setTimeout(() => {
+      document.getElementById("api").scrollIntoView({ behavior: "smooth" });
+    }, 300);
   }
 
   // ── DRAW ───────────────────────────────────────────────────────────────────
@@ -269,6 +297,10 @@ const ApiMap = (() => {
 
     container.appendChild(mapWrap);
 
+    // Back button
+    const btn = document.getElementById("back-btn");
+    if (btn) btn.addEventListener("click", closeDetail);
+
     let hasDrawn = false;
     const ro = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
@@ -299,8 +331,21 @@ const ApiMap = (() => {
 
     const allPaths = new Set();
     connPaths.forEach(({ paths }) => paths.forEach((p) => allPaths.add(p)));
+
+    const totalActive = activePaths.size;
+    const STAGGER_TOTAL = 0.13; // fixed window — same as 3 lines at old speed
+    let activeIdx = 0;
     allPaths.forEach((p) => {
-      p.setAttribute("opacity", activePaths.has(p) ? "0.9" : "0.03");
+      if (activePaths.has(p)) {
+        const delay =
+          totalActive > 1 ? (STAGGER_TOTAL / (totalActive - 1)) * activeIdx : 0;
+        p.style.transitionDelay = `${delay.toFixed(3)}s`;
+        p.setAttribute("opacity", "0.9");
+        activeIdx++;
+      } else {
+        p.style.transitionDelay = "0s";
+        p.setAttribute("opacity", "0.03");
+      }
     });
 
     Object.entries(parentEls).forEach(([nid, { el }]) => {
@@ -322,6 +367,7 @@ const ApiMap = (() => {
       paths.forEach((p) => {
         if (seen.has(p)) return;
         seen.add(p);
+        p.style.transitionDelay = "0s";
         p.setAttribute("opacity", "0.22");
       });
     });
@@ -335,7 +381,7 @@ const ApiMap = (() => {
     const mapH = mapWrap.clientHeight;
 
     card.innerHTML = "";
-    card.appendChild(buildCardContent(node, parentEls, connPaths, card));
+    card.appendChild(buildCardContent(node));
     card.classList.add("is-visible");
 
     const closeBtn = card.querySelector(".api-card__close");
@@ -348,26 +394,14 @@ const ApiMap = (() => {
       });
     }
 
-    // "Discover flow" button
     const discoverBtn = card.querySelector(".api-card__discover");
     if (discoverBtn) {
       discoverBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        // Emit context event so flow.js knows which node was selected
         window.dispatchEvent(
-          new CustomEvent("api:discover-flow", {
-            detail: { nodeId: node.id },
-          }),
+          new CustomEvent("api:discover-flow", { detail: { nodeId: node.id } }),
         );
-        // Scroll to flow section
-        const scrollContainer = document.getElementById("scroll-container");
-        const flowSection = document.getElementById("flow");
-        if (scrollContainer && flowSection) {
-          scrollContainer.scrollTo({
-            top: flowSection.offsetTop,
-            behavior: "smooth",
-          });
-        }
+        openDetail();
       });
     }
 
@@ -392,7 +426,6 @@ const ApiMap = (() => {
     const frag = document.createDocumentFragment();
     const color = resolveColor(node.color);
 
-    // Header
     const header = document.createElement("div");
     header.className = "api-card__header";
     header.innerHTML = `
@@ -402,7 +435,6 @@ const ApiMap = (() => {
     `;
     frag.appendChild(header);
 
-    // Connections
     const nodeConns = connections.filter(
       (c) => c.from === node.id || c.to === node.id,
     );
@@ -447,7 +479,6 @@ const ApiMap = (() => {
       frag.appendChild(list);
     }
 
-    // Discover button
     const footer = document.createElement("div");
     footer.className = "api-card__footer";
     footer.innerHTML = `
