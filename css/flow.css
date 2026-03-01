@@ -1,39 +1,89 @@
-/* ── FLOW SVG (ecosystem section) ───────────────────────────────────────────── */
+/* ── FLOW DIAGRAM ─────────────────────────────────────────────────────────────
+   Styles for the context-driven flow diagram in the #flow section.
+   Reads from api.json via flow.js — no grid layout, nodes positioned absolutely.
+────────────────────────────────────────────────────────────────────────────── */
 
-#flow-svg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: var(--z-flow);
-  width: 100%;
-  height: 100%;
+/* ── INTRO ───────────────────────────────────────────────────────────────── */
+
+.flow-intro {
+  margin-bottom: var(--space-8);
 }
 
-.flow-path {
-  fill: none;
-  stroke-width: var(--flow-stroke-width);
-  stroke-dasharray: var(--flow-dash-array);
-  opacity: var(--flow-opacity-min);
-  animation: flowPulse var(--duration-flow) ease-in-out infinite;
+.flow-intro__headline {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.2;
 }
 
-/* ── FLOW DIAGRAM (flow section) ─────────────────────────────────────────────── */
+.flow-intro__body {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 0;
+  max-width: 560px;
+}
+
+/* ── BACK BUTTON ─────────────────────────────────────────────────────────── */
+
+.flow-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  margin-bottom: var(--space-6);
+  transition:
+    border-color var(--duration-fast),
+    color var(--duration-fast),
+    background var(--duration-fast);
+}
+
+.flow-back-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────────── */
 
 .flow-diagram {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-9);
-  height: 100%;
-  align-items: center;
+  grid-template-columns: 1fr 340px;
+  grid-template-rows: auto 1fr;
+  gap: var(--space-7) var(--space-9);
+  height: 520px;
+}
+
+/* Back button spans full width above the two columns */
+.flow-back-btn {
+  grid-column: 1 / -1;
+  justify-self: start;
 }
 
 .flow-diagram__map {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: var(--space-7);
-  aspect-ratio: 1;
+  grid-row: 2;
+  grid-column: 1;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+/* Dynamic map — nodes positioned absolutely via JS */
+.flow-diagram__map--dynamic {
+  position: relative;
 }
 
 .flow-diagram__svg {
@@ -41,158 +91,135 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: var(--z-flow);
   overflow: visible;
-}
-
-.flow-diagram__svg .flow-path {
+  z-index: 0;
   pointer-events: none;
 }
 
-.flow-diagram__hit {
-  pointer-events: all;
-  cursor: pointer;
-}
-
-/* ── FLOW NODE ───────────────────────────────────────────────────────────────── */
-
-.flow-node {
-  position: relative;
+.flow-diagram__panel {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-subtle);
   background: var(--surface);
-  padding: var(--space-7);
+  padding: var(--space-8);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* ── FLOW NODE ───────────────────────────────────────────────────────────── */
+
+.flow-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  padding: var(--space-5) var(--space-6);
+  cursor: pointer;
+  z-index: 2;
+  min-width: 120px;
+  text-align: center;
   transition:
-    border-color var(--duration-slow),
-    background var(--duration-slow),
-    opacity var(--duration-slow);
-  z-index: var(--z-above);
+    border-color var(--duration-normal),
+    background var(--duration-normal),
+    opacity var(--duration-normal),
+    box-shadow var(--duration-normal);
 }
 
 .flow-node::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--panel-accent-bar);
-  height: 100%;
-  background: var(--accent, var(--muted));
-  opacity: var(--opacity-high);
-  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--duration-normal);
+  pointer-events: none;
+}
+
+/* Focal node — larger, always prominent */
+.flow-node--focal {
+  min-width: 150px;
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 24px color-mix(in srgb, var(--accent) 20%, transparent);
+  z-index: 4;
+}
+
+.flow-node--focal::before {
+  opacity: 0.07;
+}
+
+.flow-node.is-active {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 16px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.flow-node.is-active::before {
+  opacity: 0.05;
+}
+
+.flow-node.is-dimmed {
+  opacity: 0.2;
 }
 
 .flow-node__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
+  align-items: center;
 }
 
 .flow-node__label {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  opacity: var(--opacity-label);
+  opacity: 0.7;
+  line-height: 1;
 }
 
 .flow-node__title {
   font-family: var(--font-sans);
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
   font-weight: var(--weight-bold);
   color: var(--text);
+  line-height: 1.2;
 }
 
-.flow-node.is-active {
-  border-color: var(--accent, var(--border-hover));
-  background: var(--panel-hover-bg);
-}
-
-.flow-node.is-active .flow-node__label {
-  opacity: 1;
-}
-
-.flow-node.is-hover {
-  border-color: var(--accent, var(--border-hover));
-  background: var(--panel-hover-bg);
-}
-
-.flow-node.is-dimmed {
-  opacity: 0.3;
-}
-
-/* ── FLOW DIAGRAM LINE LABEL ─────────────────────────────────────────────────── */
-
-.flow-diagram__line-label {
-  transition: opacity var(--duration-normal);
-  pointer-events: none;
-}
-
-/* ── FLOW RIGHT PANEL ────────────────────────────────────────────────────────── */
-
-.flow-diagram__panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  height: 100%;
-  justify-content: center;
-}
-
-/* ── FLOW GUIDE ──────────────────────────────────────────────────────────────── */
-
-.flow-diagram__guide {
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface);
-  padding: var(--space-7) var(--space-9);
-}
-
-.flow-diagram__guide-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.flow-diagram__guide-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.flow-diagram__guide-item strong {
-  color: var(--text);
-  font-weight: var(--weight-semibold);
-}
-
-.flow-diagram__guide-icon {
-  font-size: var(--text-md);
-  opacity: var(--opacity-label);
-  flex-shrink: 0;
-  width: var(--space-7);
-  text-align: center;
-}
-
-/* ── FLOW DESCRIPTION PANEL ──────────────────────────────────────────────────── */
+/* ── DESCRIPTION PANEL ───────────────────────────────────────────────────── */
 
 .flow-diagram__desc {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  overflow: hidden;
+}
+
+/* Wrapper splits scrollable content from pinned nav */
+.flow-diagram__desc-wrapper {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  min-height: 0;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface);
-  padding: var(--space-9);
-  transition: border-color var(--duration-slow);
+  overflow: hidden;
+}
+
+.flow-diagram__desc-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding-bottom: var(--space-4);
+  animation: panelIn var(--duration-enter, 0.2s) ease both;
 }
 
 .flow-diagram__desc-empty {
@@ -200,47 +227,40 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  text-align: center;
 }
 
 .flow-diagram__desc-hint {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--muted);
-  opacity: var(--opacity-label);
-  text-align: center;
-}
-
-.flow-diagram__desc-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  animation: panelIn var(--duration-enter) var(--ease-out) forwards;
+  opacity: 0.45;
+  line-height: 1.7;
 }
 
 .flow-diagram__desc-route {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
   flex-wrap: wrap;
-}
-
-.flow-diagram__desc-route .flow-node__label {
-  opacity: 1;
+  gap: var(--space-2);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .flow-diagram__desc-arrow {
   font-family: var(--font-mono);
   font-size: var(--text-md);
-  opacity: var(--opacity-high);
+  font-weight: var(--weight-bold);
+  opacity: 0.8;
 }
 
 .flow-diagram__desc-label {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  opacity: var(--opacity-high);
+  opacity: 0.7;
 }
 
 .flow-diagram__desc-body {
@@ -250,31 +270,151 @@
   line-height: 1.8;
 }
 
-/* ── FLOW DESC — connection list (node hover) ────────────────────────────────── */
+/* ── ENDPOINTS ───────────────────────────────────────────────────────────── */
 
-.flow-diagram__desc-connections {
+.flow-diagram__endpoints {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
+  overflow-y: scroll;
 }
 
-.flow-diagram__desc-connection {
+.flow-diagram__endpoints-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+.flow-diagram__endpoint {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: var(--space-3);
+  row-gap: 2px;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg);
+}
+
+.flow-diagram__endpoint-method {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  grid-row: 1;
+  grid-column: 1;
+  align-self: start;
+  padding-top: 2px;
+}
+
+.flow-diagram__endpoint-path {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+  grid-row: 1;
+  grid-column: 2;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.flow-diagram__endpoint-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  opacity: 0.5;
+  grid-row: 2;
+  grid-column: 1 / -1;
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--border-subtle);
+  line-height: 1.5;
+}
+
+/* ── PREV / NEXT NAV ─────────────────────────────────────────────────────── */
+
+.flow-diagram__nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  margin-top: auto;
 }
 
-.flow-diagram__desc-tag {
+.flow-diagram__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text);
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  opacity: var(--opacity-high);
-  margin-left: auto;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast),
+    background var(--duration-fast);
 }
 
-.flow-diagram__desc-locked {
+.flow-diagram__nav-btn:hover:not(:disabled) {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.flow-diagram__nav-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.flow-diagram__nav-count {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--muted);
-  opacity: var(--opacity-label);
-  margin-top: var(--space-4);
+  opacity: 0.5;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ── CARD DISCOVER BUTTON (in api.js card footer) ────────────────────────── */
+
+.api-card__footer {
+  padding: var(--space-5) var(--space-6) var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.api-card__discover {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast),
+    background var(--duration-fast);
+}
+
+.api-card__discover:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.api-card__discover-icon {
+  opacity: 0.5;
+  font-size: var(--text-md);
 }
