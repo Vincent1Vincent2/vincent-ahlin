@@ -1,31 +1,103 @@
 // ── FLOW ──────────────────────────────────────────────────────────────────────
-// Renders the interactive flow diagram in the #flow section of index.html.
-// Owns its own data fetch, node layout, SVG lines, and description panel.
+// Context-driven flow diagram. Reads from api.json.
+// Listens for "api:discover-flow" from api.js to set which node to focus.
+// On arrival: focal node centered, connected nodes in a ring, first connection
+// auto-selected and described. Prev/Next cycles through all connections.
+// Back button returns to #api section.
 
 const Flow = (() => {
   // ── STATE ──────────────────────────────────────────────────────────────────
 
-  let systems = [];
-  let flows = [];
-  let selected = null; // locked flow key e.g. "plugin→server"
+  let allNodes = [];
+  let allConnections = [];
+  let systemMeta = {};
+
+  let contextNodeId = null;
+  let activeConnIdx = 0;
+  let activeConns = [];
+  let lineEls = {};
+  let nodeEls = {};
+  let descEl = null;
+  let mapWrap = null;
+  let svgEl = null;
 
   // ── DATA ───────────────────────────────────────────────────────────────────
 
   async function fetchData() {
-    const res = await fetch("./data/systems.json");
+    const res = await fetch("./data/api.json");
     const data = await res.json();
-    systems = data.systems;
-    flows = data.flows;
+    allNodes = data.nodes;
+    allConnections = data.connections;
+    allNodes.forEach((n) => {
+      systemMeta[n.id] = n;
+    });
   }
 
-  // ── NODE POSITIONS ─────────────────────────────────────────────────────────
+  // ── UTILS ──────────────────────────────────────────────────────────────────
 
-  const NODE_POSITIONS = {
-    plugin: { col: 0, row: 0 },
-    server: { col: 1, row: 0 },
-    portal: { col: 0, row: 1 },
-    site: { col: 1, row: 1 },
-  };
+  function resolveColor(color) {
+    if (!color || !color.startsWith("var(")) return color || "#888";
+    const name = color.slice(4, -1);
+    return (
+      getComputedStyle(document.documentElement)
+        .getPropertyValue(name)
+        .trim() || "#888"
+    );
+  }
+
+  function methodColor(method) {
+    switch (method) {
+      case "GET":
+        return "hsl(150, 60%, 52%)";
+      case "POST":
+        return "hsl(210, 80%, 62%)";
+      case "PUT":
+        return "hsl(45,  85%, 58%)";
+      case "DELETE":
+        return "hsl(0,   70%, 58%)";
+      case "SQL":
+        return "hsl(280, 60%, 65%)";
+      default:
+        return "hsl(0, 0%, 60%)";
+    }
+  }
+
+  // ── CONTEXT ────────────────────────────────────────────────────────────────
+
+  function getContext(nodeId) {
+    const conns = allConnections.filter(
+      (c) => c.from === nodeId || c.to === nodeId,
+    );
+    const nodeIds = new Set([nodeId]);
+    conns.forEach((c) => {
+      nodeIds.add(c.from);
+      nodeIds.add(c.to);
+    });
+    const nodes = allNodes.filter((n) => nodeIds.has(n.id));
+    return { conns, nodes };
+  }
+
+  // ── LAYOUT ─────────────────────────────────────────────────────────────────
+
+  function layoutNodes(nodes, focalId, w, h) {
+    const positions = {};
+    const cx = w / 2;
+    const cy = h / 2;
+    const r = Math.min(w, h) * 0.32;
+    const others = nodes.filter((n) => n.id !== focalId);
+
+    positions[focalId] = { x: cx, y: cy };
+
+    others.forEach((n, i) => {
+      const angle = -Math.PI / 2 + (2 * Math.PI * i) / others.length;
+      positions[n.id] = {
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r,
+      };
+    });
+
+    return positions;
+  }
 
   // ── BUILD ──────────────────────────────────────────────────────────────────
 
@@ -35,123 +107,104 @@ const Flow = (() => {
     const layout = document.createElement("div");
     layout.className = "flow-diagram";
 
-    const diagram = document.createElement("div");
-    diagram.className = "flow-diagram__map";
+    // Back button
+    const backBtn = document.createElement("button");
+    backBtn.className = "flow-back-btn";
+    backBtn.innerHTML = `← Back to API map`;
+    backBtn.addEventListener("click", () => {
+      const sc = document.getElementById("scroll-container");
+      const api = document.getElementById("api");
+      if (sc && api) sc.scrollTo({ top: api.offsetTop, behavior: "smooth" });
+    });
+    layout.appendChild(backBtn);
 
-    const svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // Map
+    mapWrap = document.createElement("div");
+    mapWrap.className = "flow-diagram__map flow-diagram__map--dynamic";
+    svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svgEl.classList.add("flow-diagram__svg");
-    diagram.appendChild(svgEl);
+    mapWrap.appendChild(svgEl);
+    layout.appendChild(mapWrap);
 
-    const nodeEls = {};
-    const sysMap = {};
-    systems.forEach((s) => {
-      sysMap[s.id] = s;
-    });
-
-    systems.forEach((sys) => {
-      const pos = NODE_POSITIONS[sys.id];
-      if (!pos) return;
-
-      const node = document.createElement("div");
-      node.className = "flow-node";
-      node.dataset.id = sys.id;
-      node.style.setProperty("--accent", sys.color);
-      node.style.gridColumn = pos.col + 1;
-      node.style.gridRow = pos.row + 1;
-
-      node.innerHTML = `
-        <div class="flow-node__inner">
-          <span class="flow-node__label" style="color:${sys.color}">${sys.label}</span>
-          <span class="flow-node__title">${sys.title}</span>
-        </div>
-      `;
-
-      diagram.appendChild(node);
-      nodeEls[sys.id] = node;
-    });
-
-    layout.appendChild(diagram);
-
-    // ── RIGHT PANEL ─────────────────────────────────────────────────────────
-
+    // Panel
     const panel = document.createElement("div");
     panel.className = "flow-diagram__panel";
-
-    const guide = document.createElement("div");
-    guide.className = "flow-diagram__guide";
-    guide.innerHTML = `
-      <ul class="flow-diagram__guide-list">
-        <li class="flow-diagram__guide-item">
-          <span class="flow-diagram__guide-icon">⬡</span>
-          <span>Hover a <strong>node</strong> to see its connections</span>
-        </li>
-        <li class="flow-diagram__guide-item">
-          <span class="flow-diagram__guide-icon">⤳</span>
-          <span>Hover a <strong>line</strong> to inspect the data flow</span>
-        </li>
-        <li class="flow-diagram__guide-item">
-          <span class="flow-diagram__guide-icon">↵</span>
-          <span>Click a <strong>line</strong> to lock the selection</span>
-        </li>
-      </ul>
-    `;
-
-    const desc = document.createElement("div");
-    desc.className = "flow-diagram__desc";
-    showEmpty(desc);
-
-    panel.appendChild(guide);
-    panel.appendChild(desc);
+    descEl = document.createElement("div");
+    descEl.className = "flow-diagram__desc";
+    panel.appendChild(descEl);
     layout.appendChild(panel);
     container.appendChild(layout);
 
-    requestAnimationFrame(() => {
-      const lineEls = drawLines(svgEl, nodeEls, desc, sysMap);
+    if (!contextNodeId) {
+      showPrompt();
+      return;
+    }
 
-      // Node hover
-      Object.entries(nodeEls).forEach(([id, el]) => {
-        el.addEventListener("mouseenter", () => {
-          if (selected) return;
-          hoverNode(id, nodeEls, lineEls, desc, sysMap);
-        });
-        el.addEventListener("mouseleave", () => {
-          if (selected) return;
-          resetAll(nodeEls, lineEls);
-          showEmpty(desc);
-        });
-      });
+    const { conns, nodes } = getContext(contextNodeId);
+    activeConns = conns;
+    activeConnIdx = 0;
+
+    const ro = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      if (!width || !height) return;
+      drawContext(nodes, conns, width, height);
     });
+    ro.observe(mapWrap);
   }
 
-  // ── DRAW LINES ─────────────────────────────────────────────────────────────
+  // ── DRAW CONTEXT ───────────────────────────────────────────────────────────
 
-  function drawLines(svgEl, nodeEls, descEl, sysMap) {
-    const diagramEl = svgEl.closest(".flow-diagram__map");
-    if (!diagramEl) return {};
-
+  function drawContext(nodes, conns, w, h) {
     svgEl.innerHTML = "";
-    const lineEls = {};
+    mapWrap.querySelectorAll(".flow-node").forEach((el) => el.remove());
+    nodeEls = {};
+    lineEls = {};
 
-    flows.forEach((flow) => {
-      const fromNode = nodeEls[flow.from];
-      const toNode = nodeEls[flow.to];
-      if (!fromNode || !toNode) return;
+    const positions = layoutNodes(nodes, contextNodeId, w, h);
 
-      const fromRect = fromNode.getBoundingClientRect();
-      const toRect = toNode.getBoundingClientRect();
-      const diagramRect = diagramEl.getBoundingClientRect();
+    // ── NODES ────────────────────────────────────────────────────────────────
 
-      const ax = fromRect.left - diagramRect.left + fromRect.width / 2;
-      const ay = fromRect.top - diagramRect.top + fromRect.height / 2;
-      const bx = toRect.left - diagramRect.left + toRect.width / 2;
-      const by = toRect.top - diagramRect.top + toRect.height / 2;
+    nodes.forEach((node) => {
+      const pos = positions[node.id];
+      const color = resolveColor(node.color);
+      const isFocal = node.id === contextNodeId;
 
-      const mx = (ax + bx) / 2;
-      const my = (ay + by) / 2;
-      const cx = mx - (by - ay) * 0.2;
-      const cy = my + (bx - ax) * 0.2;
+      const el = document.createElement("div");
+      el.className = `flow-node${isFocal ? " flow-node--focal" : ""}`;
+      el.dataset.id = node.id;
+      el.style.left = `${pos.x}px`;
+      el.style.top = `${pos.y}px`;
+      el.style.setProperty("--accent", color);
 
-      const d = `M ${ax} ${ay} Q ${cx} ${cy} ${bx} ${by}`;
+      el.innerHTML = `
+        <div class="flow-node__inner">
+          <span class="flow-node__label" style="color:${color}">${node.label}</span>
+          <span class="flow-node__title">${node.title}</span>
+        </div>
+      `;
+
+      mapWrap.appendChild(el);
+      nodeEls[node.id] = el;
+    });
+
+    // ── LINES ────────────────────────────────────────────────────────────────
+
+    conns.forEach((conn, i) => {
+      const fromPos = positions[conn.from];
+      const toPos = positions[conn.to];
+      if (!fromPos || !toPos) return;
+
+      const color = resolveColor(conn.color);
+      const bow = 45 * (i % 2 === 0 ? 1 : -1);
+      const mx = (fromPos.x + toPos.x) / 2;
+      const my = (fromPos.y + toPos.y) / 2;
+      const dx = toPos.x - fromPos.x;
+      const dy = toPos.y - fromPos.y;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const cpx = mx - (dy / len) * bow;
+      const cpy = my + (dx / len) * bow;
+
+      const d = `M ${fromPos.x} ${fromPos.y} Q ${cpx} ${cpy} ${toPos.x} ${toPos.y}`;
 
       // Glow
       const glow = document.createElementNS(
@@ -159,43 +212,30 @@ const Flow = (() => {
         "path",
       );
       glow.setAttribute("d", d);
-      glow.setAttribute("stroke", flow.color);
+      glow.setAttribute("stroke", color);
       glow.setAttribute("stroke-width", "6");
       glow.setAttribute("fill", "none");
       glow.setAttribute("opacity", "0");
       glow.style.filter = "blur(4px)";
-      glow.style.transition = "opacity 0.15s";
+      glow.style.transition = "opacity 0.2s";
       glow.style.pointerEvents = "none";
       svgEl.appendChild(glow);
 
-      // Visible line
+      // Line
       const path = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "path",
       );
       path.setAttribute("d", d);
-      path.setAttribute("stroke", flow.color);
-      path.setAttribute("class", "flow-path");
-      path.style.animationDelay = flow.delay;
+      path.setAttribute("stroke", color);
+      path.setAttribute("stroke-width", "1.5");
+      path.setAttribute("fill", "none");
+      path.setAttribute("opacity", "0.2");
+      path.style.transition = "opacity 0.2s";
       path.style.pointerEvents = "none";
       svgEl.appendChild(path);
 
-      // Label
-      const text = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "text",
-      );
-      text.setAttribute("x", cx);
-      text.setAttribute("y", cy - 8);
-      text.setAttribute("text-anchor", "middle");
-      text.setAttribute("fill", flow.color);
-      text.setAttribute("font-size", "9");
-      text.setAttribute("font-family", "DM Mono, monospace");
-      text.setAttribute("opacity", "0.5");
-      text.style.pointerEvents = "none";
-      svgEl.appendChild(text);
-
-      // Hit area
+      // Hit
       const hit = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "path",
@@ -204,167 +244,179 @@ const Flow = (() => {
       hit.setAttribute("stroke", "transparent");
       hit.setAttribute("stroke-width", "40");
       hit.setAttribute("fill", "none");
-      hit.setAttribute("class", "flow-diagram__hit");
+      hit.style.cursor = "pointer";
       svgEl.appendChild(hit);
 
-      const key = `${flow.from}→${flow.to}`;
-      lineEls[key] = { path, glow, text, hit };
+      const key = `${conn.from}→${conn.to}`;
+      lineEls[key] = { path, glow, hit, conn };
 
-      // Line hover
-      hit.addEventListener("mouseenter", () => {
-        if (selected) return;
-        activateLine(key, flow, lineEls, nodeEls, descEl, sysMap, false);
-      });
-
-      hit.addEventListener("mouseleave", () => {
-        if (selected) return;
-        resetAll(nodeEls, lineEls);
-        showEmpty(descEl);
-      });
-
-      // Line click — lock selection
       hit.addEventListener("click", () => {
-        if (selected === key) {
-          selected = null;
-          resetAll(nodeEls, lineEls);
-          showEmpty(descEl);
-        } else {
-          selected = key;
-          activateLine(key, flow, lineEls, nodeEls, descEl, sysMap, true);
-        }
+        const idx = activeConns.indexOf(conn);
+        if (idx !== -1) selectConn(idx);
       });
     });
 
-    return lineEls;
+    // Auto-select first connection
+    if (activeConns.length) selectConn(0);
   }
 
-  // ── ACTIVATE LINE ─────────────────────────────────────────────────────────
+  // ── SELECT CONNECTION ──────────────────────────────────────────────────────
 
-  function activateLine(key, flow, lineEls, nodeEls, descEl, sysMap, locked) {
-    Object.entries(lineEls).forEach(([k, { path, glow, text }]) => {
+  function selectConn(idx) {
+    activeConnIdx = idx;
+    const conn = activeConns[idx];
+    if (!conn) return;
+
+    const key = `${conn.from}→${conn.to}`;
+
+    // Highlight lines
+    Object.entries(lineEls).forEach(([k, { path, glow }]) => {
       const active = k === key;
-      path.style.opacity = active ? "1" : "0.1";
-      path.style.animation = active ? "none" : "";
+      path.setAttribute("opacity", active ? "1" : "0.06");
       glow.setAttribute("opacity", active ? "0.4" : "0");
-      text.setAttribute("opacity", active ? "0.9" : "0");
     });
 
+    // Highlight nodes
     Object.entries(nodeEls).forEach(([id, el]) => {
-      el.classList.remove("is-active", "is-dimmed", "is-hover");
-      const connected = id === flow.from || id === flow.to;
+      el.classList.remove("is-active", "is-dimmed");
+      const connected = id === conn.from || id === conn.to;
       el.classList.toggle("is-active", connected);
       el.classList.toggle("is-dimmed", !connected);
     });
 
-    showFlowDesc(descEl, flow, sysMap, locked);
+    // Show description
+    showConn(idx);
   }
 
-  // ── HOVER NODE ────────────────────────────────────────────────────────────
+  // ── SHOW DESCRIPTION ───────────────────────────────────────────────────────
 
-  function hoverNode(id, nodeEls, lineEls, descEl, sysMap) {
-    const connectedFlows = flows.filter((f) => f.from === id || f.to === id);
-    const connectedIds = new Set(connectedFlows.flatMap((f) => [f.from, f.to]));
+  function showConn(idx) {
+    if (!descEl) return;
+    activeConnIdx = idx;
+    const conn = activeConns[idx];
+    if (!conn) return;
 
-    Object.entries(nodeEls).forEach(([nid, el]) => {
-      el.classList.remove("is-active", "is-dimmed", "is-hover");
-      if (nid === id) {
-        el.classList.add("is-hover");
-      } else if (connectedIds.has(nid)) {
-        el.classList.add("is-active");
-      } else {
-        el.classList.add("is-dimmed");
-      }
-    });
-
-    Object.entries(lineEls).forEach(([key, { path, glow, text }]) => {
-      const active = connectedFlows.some((f) => `${f.from}→${f.to}` === key);
-      path.style.opacity = active ? "1" : "0.1";
-      path.style.animation = active ? "none" : "";
-      glow.setAttribute("opacity", active ? "0.3" : "0");
-      text.setAttribute("opacity", active ? "0.8" : "0");
-    });
-
-    showNodeDesc(descEl, id, connectedFlows, sysMap);
-  }
-
-  // ── DESC: FLOW ─────────────────────────────────────────────────────────────
-
-  function showFlowDesc(descEl, flow, sysMap, locked) {
-    const fromSys = sysMap[flow.from];
-    const toSys = sysMap[flow.to];
+    const fromNode = systemMeta[conn.from];
+    const toNode = systemMeta[conn.to];
+    const color = resolveColor(conn.color);
+    const total = activeConns.length;
 
     descEl.innerHTML = "";
-    const content = document.createElement("div");
-    content.className = "flow-diagram__desc-content";
-    content.innerHTML = `
-      <div class="flow-diagram__desc-route">
-        <span class="flow-node__label" style="color:${fromSys.color}">${fromSys.label}</span>
-        <span class="flow-node__title" style="color:${fromSys.color}">${fromSys.title}</span>
-        <span class="flow-diagram__desc-arrow" style="color:${flow.color}">→</span>
-        <span class="flow-node__label" style="color:${toSys.color}">${toSys.label}</span>
-        <span class="flow-node__title" style="color:${toSys.color}">${toSys.title}</span>
-      </div>
-      <div class="flow-diagram__desc-label" style="color:${flow.color}">${flow.label}</div>
-      <div class="flow-diagram__desc-body">${flow.description}</div>
-      ${locked ? `<div class="flow-diagram__desc-locked">Click again to deselect</div>` : ""}
-    `;
-    descEl.appendChild(content);
-  }
 
-  // ── DESC: NODE ─────────────────────────────────────────────────────────────
+    // Wrapper: scrollable content + sticky nav
+    const wrapper = document.createElement("div");
+    wrapper.className = "flow-diagram__desc-wrapper";
 
-  function showNodeDesc(descEl, id, connectedFlows, sysMap) {
-    const sys = sysMap[id];
-
-    descEl.innerHTML = "";
     const content = document.createElement("div");
     content.className = "flow-diagram__desc-content";
 
-    const flowList = connectedFlows
-      .map((f) => {
-        const other = f.from === id ? sysMap[f.to] : sysMap[f.from];
-        const dir = f.from === id ? "→" : "←";
-        return `
-        <div class="flow-diagram__desc-connection">
-          <span class="flow-diagram__desc-arrow" style="color:${f.color}">${dir}</span>
-          <span class="flow-node__title" style="color:${other.color}">${other.title}</span>
-          <span class="flow-diagram__desc-tag" style="color:${f.color}">${f.label}</span>
-        </div>
-      `;
-      })
-      .join("");
-
-    content.innerHTML = `
-      <div class="flow-diagram__desc-route">
-        <span class="flow-node__label" style="color:${sys.color}">${sys.label}</span>
-        <span class="flow-node__title" style="color:${sys.color}">${sys.title}</span>
-      </div>
-      <div class="flow-diagram__desc-connections">${flowList}</div>
+    // Route header
+    const route = document.createElement("div");
+    route.className = "flow-diagram__desc-route";
+    route.innerHTML = `
+      <span class="flow-node__label" style="color:${resolveColor(fromNode?.color)}">${fromNode?.label || conn.from}</span>
+      <span class="flow-node__title" style="color:${resolveColor(fromNode?.color)}">${fromNode?.title || conn.from}</span>
+      <span class="flow-diagram__desc-arrow" style="color:${color}">→</span>
+      <span class="flow-node__label" style="color:${resolveColor(toNode?.color)}">${toNode?.label || conn.to}</span>
+      <span class="flow-node__title" style="color:${resolveColor(toNode?.color)}">${toNode?.title || conn.to}</span>
     `;
+    content.appendChild(route);
 
-    descEl.appendChild(content);
+    // Connection label
+    const label = document.createElement("div");
+    label.className = "flow-diagram__desc-label";
+    label.style.color = color;
+    label.textContent = conn.label;
+    content.appendChild(label);
+
+    // Description
+    if (conn.description) {
+      const body = document.createElement("div");
+      body.className = "flow-diagram__desc-body";
+      body.textContent = conn.description;
+      content.appendChild(body);
+    }
+
+    // Endpoints
+    if (conn.endpoints?.length) {
+      const eps = document.createElement("div");
+      eps.className = "flow-diagram__endpoints";
+
+      const epsLabel = document.createElement("div");
+      epsLabel.className = "flow-diagram__endpoints-label";
+      epsLabel.textContent = "Endpoints";
+      eps.appendChild(epsLabel);
+
+      conn.endpoints.forEach((ep) => {
+        const row = document.createElement("div");
+        row.className = "flow-diagram__endpoint";
+        row.innerHTML = `
+          <span class="flow-diagram__endpoint-method" style="color:${methodColor(ep.method)}">${ep.method}</span>
+          <span class="flow-diagram__endpoint-path">${ep.path}</span>
+          <span class="flow-diagram__endpoint-meta">${ep.auth} · ${ep.trigger}</span>
+        `;
+        eps.appendChild(row);
+      });
+
+      content.appendChild(eps);
+    }
+
+    wrapper.appendChild(content);
+
+    // Prev / Next nav — outside scroll, always visible
+    if (total > 1) {
+      const nav = document.createElement("div");
+      nav.className = "flow-diagram__nav";
+
+      const prevBtn = document.createElement("button");
+      prevBtn.className = "flow-diagram__nav-btn";
+      prevBtn.textContent = "← Prev";
+      prevBtn.disabled = idx === 0;
+      prevBtn.addEventListener("click", () =>
+        selectConn((activeConnIdx - 1 + total) % total),
+      );
+
+      const counter = document.createElement("span");
+      counter.className = "flow-diagram__nav-count";
+      counter.textContent = `${idx + 1} / ${total}`;
+
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "flow-diagram__nav-btn";
+      nextBtn.textContent = "Next →";
+      nextBtn.disabled = idx === total - 1;
+      nextBtn.addEventListener("click", () =>
+        selectConn((activeConnIdx + 1) % total),
+      );
+
+      nav.appendChild(prevBtn);
+      nav.appendChild(counter);
+      nav.appendChild(nextBtn);
+      wrapper.appendChild(nav);
+    }
+
+    descEl.appendChild(wrapper);
   }
 
-  // ── RESET ─────────────────────────────────────────────────────────────────
+  // ── PROMPT (no context yet) ────────────────────────────────────────────────
 
-  function resetAll(nodeEls, lineEls) {
-    Object.values(nodeEls).forEach((el) => {
-      el.classList.remove("is-active", "is-dimmed", "is-hover");
-    });
-    Object.values(lineEls).forEach(({ path, glow, text }) => {
-      path.style.opacity = "";
-      path.style.animation = "";
-      glow.setAttribute("opacity", "0");
-      text.setAttribute("opacity", "0.5");
-    });
-  }
-
-  function showEmpty(descEl) {
+  function showPrompt() {
+    if (!descEl) return;
     descEl.innerHTML = `
       <div class="flow-diagram__desc-empty">
-        <span class="flow-diagram__desc-hint">Hover or click a connection to explore the data flow</span>
+        <span class="flow-diagram__desc-hint">Select a system from the API map above to explore its connections</span>
       </div>
     `;
+  }
+
+  // ── EVENT LISTENER ─────────────────────────────────────────────────────────
+
+  function listenForContext() {
+    window.addEventListener("api:discover-flow", (e) => {
+      contextNodeId = e.detail.nodeId;
+      activeConnIdx = 0;
+      const container = document.getElementById("flow-detail");
+      if (container) build(container);
+    });
   }
 
   // ── INIT ──────────────────────────────────────────────────────────────────
@@ -375,10 +427,11 @@ const Flow = (() => {
 
     await fetchData();
     build(container);
+    listenForContext();
 
     window.addEventListener("resize", () => {
-      selected = null;
-      build(container);
+      const c = document.getElementById("flow-detail");
+      if (c) build(c);
     });
   }
 
