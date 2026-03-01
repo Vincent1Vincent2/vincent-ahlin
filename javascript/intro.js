@@ -2,13 +2,13 @@
 // Renders all intro sections into the DOM on load.
 // Each section is a full <section> element with an id.
 // Scroll and nav interaction is handled by nav.js.
-// All content comes from data.json.
+// All content comes from intro.json.
 
 const Intro = (() => {
   // ── DATA ───────────────────────────────────────────────────────────────────
 
   async function fetchData() {
-    const res = await fetch("./data/data.json");
+    const res = await fetch("./data/intro.json");
     return res.json();
   }
 
@@ -63,10 +63,18 @@ const Intro = (() => {
 
     inner.appendChild(sectionLabel(d.heading));
 
-    const intro = document.createElement("p");
-    intro.className = "content-body";
-    intro.textContent = d.body;
-    inner.appendChild(intro);
+    if (d.intro) {
+      const introP = document.createElement("p");
+      introP.className = "content-body";
+      introP.textContent = d.intro;
+      inner.appendChild(introP);
+    }
+    if (d.body) {
+      const bodyP = document.createElement("p");
+      bodyP.className = "content-body";
+      bodyP.textContent = d.body;
+      inner.appendChild(bodyP);
+    }
 
     const grid = document.createElement("div");
     grid.className = "grid grid--2col content-grid";
@@ -185,50 +193,92 @@ const Intro = (() => {
     const inner = document.createElement("div");
     inner.className = "intro-section__inner";
 
-    inner.appendChild(sectionLabel(d.heading));
+    const introBlock = document.createElement("div");
+    introBlock.className = "challenges-intro";
+    introBlock.appendChild(sectionLabel(d.heading));
 
-    const grid = document.createElement("div");
-    grid.className = "grid grid--2col content-grid";
+    if (d.intro) {
+      const introP = document.createElement("p");
+      introP.className = "content-body";
+      introP.textContent = d.intro;
+      introBlock.appendChild(introP);
+    }
+    if (d.description) {
+      const descP = document.createElement("p");
+      descP.className = "content-body content-body--secondary";
+      descP.textContent = d.description;
+      introBlock.appendChild(descP);
+    }
+
+    inner.appendChild(introBlock);
+
+    const stackWrap = document.createElement("div");
+    stackWrap.className = "challenges-stack";
 
     d.items.forEach((item, i) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "challenge-card-parallax";
+      wrapper.style.setProperty("--challenge-stack-index", String(i + 1));
+
       const el = document.createElement("div");
-      el.className = "panel panel--card expand-card";
+      el.className = "panel panel--card flip-card challenge-card";
       el.style.setProperty("--accent", item.color);
       el.style.animationDelay = `${i * 0.07}s`;
-      el.dataset.expanded = "false";
+      el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", `${item.title} — click to read more`);
+      el.dataset.flipped = "false";
 
       el.innerHTML = `
-        <div class="panel__content">
-          <div class="panel__label" style="color:${item.color}">${item.num}</div>
-          <div class="panel__title">${item.title}</div>
-          <div class="panel__desc">${item.summary}</div>
-          <div class="expand-card__detail panel__desc">${item.detail}</div>
-          <button class="expand-card__toggle" aria-expanded="false">
-            <span class="expand-card__toggle-label">Read more</span>
-            <span class="expand-card__toggle-icon">↓</span>
-          </button>
+        <div class="flip-card__inner">
+          <div class="flip-card__front panel__content">
+            <div class="panel__label" style="color:${item.color}">${item.num}</div>
+            <div class="panel__title">${item.title}</div>
+            <div class="panel__desc">${item.summary}</div>
+            <button type="button" class="challenge-card__read-more" aria-label="Read more">Read more</button>
+          </div>
+          <div class="flip-card__back panel__content">
+            <div class="panel__label" style="color:${item.color}">${item.num}</div>
+            <div class="panel__title">${item.title}</div>
+            <div class="panel__desc">${item.detail}</div>
+            <button type="button" class="challenge-card__back-btn" aria-label="Back">Back</button>
+          </div>
         </div>
       `;
 
-      const btn = el.querySelector(".expand-card__toggle");
-      const label = el.querySelector(".expand-card__toggle-label");
-      const icon = el.querySelector(".expand-card__toggle-icon");
-      const detail = el.querySelector(".expand-card__detail");
+      const toggle = () => {
+        const flipped = el.dataset.flipped === "true";
+        el.dataset.flipped = String(!flipped);
+        el.classList.toggle("is-flipped", !flipped);
+      };
 
-      btn.addEventListener("click", (e) => {
+      const readMoreBtn = el.querySelector(".challenge-card__read-more");
+      const backBtn = el.querySelector(".challenge-card__back-btn");
+      readMoreBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        const expanded = el.dataset.expanded === "true";
-        el.dataset.expanded = String(!expanded);
-        detail.classList.toggle("is-visible", !expanded);
-        btn.setAttribute("aria-expanded", String(!expanded));
-        label.textContent = expanded ? "Read more" : "Read less";
-        icon.textContent = expanded ? "↓" : "↑";
+        toggle();
+      });
+      backBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggle();
       });
 
-      grid.appendChild(el);
+      el.addEventListener("click", (e) => {
+        if (e.target === readMoreBtn || e.target === backBtn) return;
+        toggle();
+      });
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle();
+        }
+      });
+
+      wrapper.appendChild(el);
+      stackWrap.appendChild(wrapper);
     });
 
-    inner.appendChild(grid);
+    inner.appendChild(stackWrap);
     section.appendChild(inner);
     return section;
   }
@@ -244,6 +294,13 @@ const Intro = (() => {
     inner.className = "intro-section__inner";
 
     inner.appendChild(sectionLabel(d.heading));
+
+    if (d.intro) {
+      const introP = document.createElement("p");
+      introP.className = "content-body";
+      introP.textContent = d.intro;
+      inner.appendChild(introP);
+    }
 
     const grid = document.createElement("div");
     grid.className = "grid grid--biz content-grid";
@@ -281,6 +338,13 @@ const Intro = (() => {
 
     inner.appendChild(sectionLabel(d.heading));
 
+    if (d.intro) {
+      const introP = document.createElement("p");
+      introP.className = "content-body";
+      introP.textContent = d.intro;
+      inner.appendChild(introP);
+    }
+
     const card = document.createElement("div");
     card.className = "panel panel--card role-card";
     card.style.setProperty("--accent", "var(--site)");
@@ -309,6 +373,49 @@ const Intro = (() => {
     return section;
   }
 
+  // ── DEPLOYMENT ──────────────────────────────────────────────────────────────
+
+  function renderDeployment(data) {
+    const d = data.deployment;
+    if (!d) return null;
+
+    const section = makeSection("deployment");
+    const inner = document.createElement("div");
+    inner.className = "intro-section__inner";
+
+    inner.appendChild(sectionLabel(d.heading));
+
+    if (d.intro) {
+      const introP = document.createElement("p");
+      introP.className = "content-body";
+      introP.textContent = d.intro;
+      inner.appendChild(introP);
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "grid grid--2col content-grid";
+
+    d.items.forEach((item, i) => {
+      const el = document.createElement("div");
+      el.className = "panel panel--card";
+      el.style.setProperty("--accent", "var(--muted)");
+      el.style.animationDelay = `${i * 0.07}s`;
+
+      el.innerHTML = `
+        <div class="panel__content">
+          <div class="panel__title">${item.label}</div>
+          <div class="panel__desc"><strong>${item.where}</strong>${item.detail ? ` — ${item.detail}` : ""}</div>
+        </div>
+      `;
+
+      grid.appendChild(el);
+    });
+
+    inner.appendChild(grid);
+    section.appendChild(inner);
+    return section;
+  }
+
   // ── RENDER ALL ─────────────────────────────────────────────────────────────
 
   function renderAll(data) {
@@ -317,10 +424,11 @@ const Intro = (() => {
 
     const renderers = [
       renderOverview,
-      renderStack,
       renderChallenges,
-      renderBusiness,
       renderRole,
+      renderStack,
+      renderBusiness,
+      renderDeployment,
     ];
 
     renderers.forEach((fn) => {
@@ -330,6 +438,50 @@ const Intro = (() => {
 
     // Notify nav.js that sections are in the DOM
     window.dispatchEvent(new CustomEvent("intro:ready"));
+
+    // Parallax for challenges section
+    setupChallengesParallax();
+  }
+
+  // ── CHALLENGES PARALLAX ─────────────────────────────────────────────────────
+
+  function setupChallengesParallax() {
+    const container = document.getElementById("scroll-container");
+    const section = document.getElementById("challenges");
+    if (!container || !section) return;
+
+    const intro = section.querySelector(".challenges-intro");
+    const cards = section.querySelectorAll(".challenge-card-parallax");
+    const lastCard = cards.length ? cards[cards.length - 1] : null;
+
+    function updateParallax() {
+      const containerRect = container.getBoundingClientRect();
+      const viewH = containerRect.height;
+      const enterOffset = 60;
+
+      cards.forEach((wrapper) => {
+        const rect = wrapper.getBoundingClientRect();
+        const topInView = rect.top - containerRect.top;
+        const progress = Math.max(0, Math.min(1, 1 - topInView / viewH));
+        const translateY = (1 - progress) * enterOffset;
+        wrapper.style.setProperty("transform", `translateY(${translateY}px)`);
+      });
+
+      if (intro && lastCard) {
+        const windowCenterY = window.innerHeight / 2;
+        const lastCardRect = lastCard.getBoundingClientRect();
+        const cardCenterY = lastCardRect.top + lastCardRect.height / 1.65;
+        if (cardCenterY < windowCenterY) {
+          intro.classList.add("sticky-off");
+        } else {
+          intro.classList.remove("sticky-off");
+        }
+      }
+    }
+
+    container.addEventListener("scroll", updateParallax);
+    window.addEventListener("resize", updateParallax);
+    updateParallax();
   }
 
   // ── INIT ───────────────────────────────────────────────────────────────────
