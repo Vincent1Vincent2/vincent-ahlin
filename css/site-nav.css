@@ -15,15 +15,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-3) var(--space-7);
   border-radius: 999px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: var(--text-sm);
+  font-size: var(--text-md);
   font-weight: var(--weight-medium);
   text-decoration: none;
+  text-align: center;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -64,6 +65,7 @@
 .site-nav__label {
   opacity: 0;
   max-width: 0;
+  width: 100%;
   overflow: hidden;
   transition:
     opacity var(--duration-normal),
