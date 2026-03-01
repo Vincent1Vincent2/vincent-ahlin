@@ -12,7 +12,7 @@
 
   <header>
     <div class="wordmark"><span>ML</span> · Ecosystem Map</div>
-    <div class="header__meta">4 systems · file structure</div>
+    <div class="header__meta">4 systems · live connections</div>
   </header>
 
   <nav id="site-nav" aria-label="Site navigation">
@@ -21,30 +21,42 @@
 
   <div class="scroll-container" id="scroll-container">
 
-    <section class="scroll-section" id="ecosystem">
-      <div class="ecosystem-split">
-
-        <div class="ecosystem-split__treemap">
-          <div class="grid grid--2x2" id="canvas">
-            <!-- filled by main.js -->
-          </div>
-          <svg id="flow-svg"></svg>
+    <!-- ── SECTION 1: API NETWORK ───────────────────────────────────────── -->
+    <section class="scroll-section" id="api">
+      <div class="intro-section__inner intro-section__inner--full">
+        <div class="section-label">API surface</div>
+        <div class="api-intro">
+          <h2 class="api-intro__headline">Every connection, mapped</h2>
+          <p class="api-intro__body">Click a system to explore its API connections. Each line is a real endpoint in
+            production.</p>
         </div>
-
-        <div class="ecosystem-split__panel" id="ecosystem-panel">
-          <!-- filled by main.js -->
+        <div id="api-detail" class="api-detail">
+          <!-- filled by api.js -->
         </div>
-
       </div>
     </section>
 
+    <!-- ── SECTION 2: DATA FLOW ─────────────────────────────────────────── -->
     <section class="scroll-section" id="flow">
       <div class="intro-section__inner">
         <div class="section-label">Data flow</div>
+        <div class="flow-intro">
+          <h2 class="flow-intro__headline">Seamless collaboration</h2>
+          <p class="flow-intro__body">Every production system looks different but needs to connect to one another
+            seamlessly.</p>
+        </div>
         <div id="flow-detail">
           <!-- filled by flow.js -->
         </div>
       </div>
+    </section>
+
+    <!-- ── SECTION 3: FILE STRUCTURE ────────────────────────────────────── -->
+    <section class="scroll-section" id="ecosystem">
+      <div class="grid grid--2x2" id="canvas">
+        <!-- filled by main.js -->
+      </div>
+      <svg id="flow-svg"></svg>
     </section>
 
   </div>
@@ -62,6 +74,7 @@
   <script src="javascript/nav.js"></script>
   <script src="javascript/main.js"></script>
   <script src="javascript/flow.js"></script>
+  <script src="javascript/api.js"></script>
 
 </body>
 
