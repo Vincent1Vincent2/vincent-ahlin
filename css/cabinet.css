@@ -2,16 +2,17 @@
    Styles for the 3D filing cabinet, drawers, files, and detail panel.
    Depends on global tokens: --bg, --surface, --border, --text, --muted,
    --font-sans, --font-mono, --ease-out.
+   Layout of the cabinet section is handled by .section-stage in layout.css.
 ────────────────────────────────────────────────────────────────────────────── */
 
 /* ── CABINET TOKENS ── */
 :root {
-  --cab-frame: 12px; /* frame thickness on each side              */
-  --cab-w: 344px; /* 320 + (2 × 12) = 344px                    */
-  --cab-h: 544px; /* 520 + (2 × 12) = 544px                    */
-  --cab-d: 500px; /* depth — top and side face size            */
-  --pull: 340px; /* how far a drawer slides toward viewer     */
-  --file-spacing: 28px; /* Z gap between stacked files               */
+  --cab-frame: 12px;
+  --cab-w: 344px;
+  --cab-h: 544px;
+  --cab-d: 500px;
+  --pull: 340px;
+  --file-spacing: 28px;
 }
 
 /* RESET */
@@ -19,26 +20,13 @@ body {
   overflow: hidden;
 }
 
-/* ── SECTION ── */
-.section-cabinet {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  gap: 48px;
-}
-
 /* ── SCENE — perspective container ── */
-/* perspective-origin Y near 0% = viewpoint high above = top face visible */
 .scene {
   perspective: 1000px;
   perspective-origin: 50% 5%;
 }
 
 /* ── CABINET — 3D wrapper ── */
-/* rotateX negative = top tilts toward viewer = looking down at cabinet */
 .cabinet {
   position: relative;
   width: var(--cab-w);
@@ -59,7 +47,6 @@ body {
   transform-style: preserve-3d;
 }
 
-/* Frame overlay — sits on top of drawers, sized to match --cab-frame */
 .cabinet__front::after {
   content: "";
   position: absolute;
@@ -71,7 +58,6 @@ body {
   z-index: 10;
 }
 
-/* Top face — hinges from top edge, folds backward to sit on top */
 .cabinet__top {
   position: absolute;
   width: var(--cab-w);
@@ -84,7 +70,6 @@ body {
   left: 0;
 }
 
-/* Right side face — hinges from right edge, folds out to the side */
 .cabinet__side {
   position: absolute;
   width: var(--cab-d);
@@ -97,7 +82,6 @@ body {
   left: var(--cab-w);
 }
 
-/* Foot strip */
 .cabinet__foot {
   position: absolute;
   bottom: 0;
@@ -118,7 +102,6 @@ body {
   overflow: visible;
   cursor: pointer;
   transform-style: preserve-3d;
-  /* offset drawers so they sit inside the frame */
   margin: 0 var(--cab-frame);
 }
 
@@ -131,7 +114,7 @@ body {
   margin-bottom: var(--cab-frame);
 }
 
-/* ── DRAWER BOX — the unit that slides out as one piece ── */
+/* ── DRAWER BOX ── */
 .drawer__box {
   position: absolute;
   inset: 0;
@@ -158,7 +141,6 @@ body {
   z-index: 2;
 }
 
-/* Accent bar */
 .drawer__face::before {
   content: "";
   position: absolute;
@@ -182,7 +164,7 @@ body {
     0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* ── DRAWER WALLS — hinge from face edges, stay folded 90deg back ── */
+/* ── DRAWER WALLS ── */
 
 .drawer__bottom {
   position: absolute;
@@ -274,8 +256,6 @@ body {
 }
 
 /* ── FILES ── */
-/* Each file is positioned absolutely with a per-file --file-z CSS var
-   set in JS, stacking them along the Z axis into the cabinet depth. */
 
 .file {
   position: absolute;
@@ -393,42 +373,7 @@ body {
   opacity: 0.4;
 }
 
-/* ── DETAIL SECTION ── */
-
-.section-detail {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  position: relative;
-}
-
-.detail-card {
-  width: 100%;
-  max-width: 800px;
-  min-height: 500px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  padding: 40px;
-  gap: 16px;
-  opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 0.35s var(--ease-out),
-    transform 0.35s var(--ease-out);
-  pointer-events: none;
-}
-
-.detail-card.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: all;
-}
+/* ── DETAIL CARD ── */
 
 .detail-card__label {
   font-family: var(--font-mono);
@@ -459,6 +404,7 @@ body {
   gap: 6px;
   margin-top: auto;
   border-top: 1px solid var(--border);
+  padding-top: 16px;
 }
 
 .detail-card__file {
@@ -471,6 +417,46 @@ body {
   border-radius: 4px;
   padding: 3px 8px;
   opacity: 0.85;
+}
+
+.detail-card__file-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.detail-card__nav-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.detail-card__nav-btn:hover:not(:disabled) {
+  border-color: var(--detail-color);
+  background: color-mix(in srgb, var(--detail-color) 8%, transparent);
+}
+
+.detail-card__nav-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.detail-card__nav-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
 }
 
 /* ── BACK BUTTON ── */

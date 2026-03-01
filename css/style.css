@@ -3,6 +3,7 @@
 
 @import "tokens.css";
 @import "reset.css";
+@import "scrollbar.css";
 @import "animations.css";
 @import "layout.css";
 @import "header.css";

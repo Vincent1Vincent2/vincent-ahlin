@@ -3,41 +3,10 @@
    Add @import "api.css"; to style.css after flow.css.
 ────────────────────────────────────────────────────────────────────────────── */
 
-/* ── INTRO BLOCK ─────────────────────────────────────────────────────────── */
+/* RESET */
 
-.api-intro {
-  margin-bottom: var(--space-8);
-}
-
-.api-intro__headline {
-  font-family: var(--font-sans);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-bold);
-  color: var(--text);
-  margin: 0 0 var(--space-3) 0;
-  line-height: 1.2;
-}
-
-.api-intro__body {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  line-height: 1.8;
-  margin: 0;
-  max-width: 560px;
-}
-
-/* ── SECTION LAYOUT ──────────────────────────────────────────────────────── */
-
-.intro-section__inner--full {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.api-detail {
-  flex: 1;
-  min-height: 0;
+body {
+  overflow: hidden;
 }
 
 /* ── MAP CONTAINER ───────────────────────────────────────────────────────── */
@@ -46,10 +15,13 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface);
-  overflow: hidden;
+  overflow: visible;
+}
+
+.api-detail {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
 .api-map__svg {
@@ -290,7 +262,6 @@
   padding: var(--space-5) var(--space-6);
   overflow-y: auto;
   flex: 1;
-  scrollbar-width: thin;
 }
 
 .api-card__endpoint {

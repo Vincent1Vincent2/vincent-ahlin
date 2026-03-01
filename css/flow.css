@@ -106,7 +106,6 @@
   background: var(--surface);
   padding: var(--space-8);
   overflow-y: auto;
-  scrollbar-width: thin;
 }
 
 /* ── FLOW NODE ───────────────────────────────────────────────────────────── */
@@ -217,7 +216,6 @@
   gap: var(--space-5);
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: thin;
   padding-bottom: var(--space-4);
   animation: panelIn var(--duration-enter, 0.2s) ease both;
 }

@@ -117,6 +117,67 @@
   flex-direction: column;
 }
 
+/* ── SECTION STAGE ───────────────────────────────────────────────────────────
+   Full-bleed centered stage layout. Used when the primary content is a
+   visual scene (API map, 3D cabinet) with a title block above it.
+   Mirrors the cabinet's section-cabinet centering but lives in layout.css
+   so any page can reuse it.
+────────────────────────────────────────────────────────────────────────────── */
+
+.section-stage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--page-padding-x)
+    calc(var(--nav-bar-height) + var(--space-10));
+  gap: var(--space-10);
+}
+
+/* ── SECTION DETAIL ──────────────────────────────────────────────────────────
+   Shared centered detail/result section. Used after a stage interaction
+   (e.g. cabinet file click, future API deep-dive). Lives here so both
+   cabinet.html and index.html can use it without duplicating.
+────────────────────────────────────────────────────────────────────────────── */
+
+.section-detail {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  position: relative;
+}
+
+.detail-card {
+  width: 100%;
+  max-width: var(--content-panel-max-width);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: var(--space-10) var(--page-padding-x)
+    calc(var(--nav-bar-height) + var(--space-10));
+  min-height: 500px;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
+  pointer-events: none;
+}
+
+.detail-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
 /* ── CONTENT PANEL ───────────────────────────────────────────────────────────── */
 
 .content-panel {
