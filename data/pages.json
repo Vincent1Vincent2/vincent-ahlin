@@ -103,13 +103,13 @@
       ]
     },
     {
-      "id": "booking-system-frame",
-      "label": "Booking System Frame",
+      "id": "booking-system",
+      "label": "Booking System",
       "pages": [
         {
           "id": "index",
           "label": "Intro",
-          "href": "/work/booking-system-frame/index.html",
+          "href": "/work/booking-system/index.html",
           "color": "var(--text)",
           "sections": [
             { "id": "overview", "label": "Overview", "color": "var(--text)" },

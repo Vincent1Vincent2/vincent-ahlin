@@ -1,2 +1,4 @@
 Context.md
 .vscode
+.env
+node_modules
