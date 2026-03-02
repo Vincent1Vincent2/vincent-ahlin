@@ -1,0 +1,615 @@
+/* ── CONTACT STAGE ───────────────────────────────────────────────────────────── */
+
+.contact-stage {
+  position: fixed;
+  inset: 0;
+  top: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── PHONE SHELL ─────────────────────────────────────────────────────────────── */
+
+.phone {
+  position: relative;
+  width: 375px;
+  height: calc(100vh - var(--header-height) - var(--space-9) * 2);
+  max-height: 780px;
+  min-height: 600px;
+  background: #0d0d14;
+  border-radius: 48px;
+  border: 1px solid var(--border-default);
+  box-shadow:
+    0 0 0 6px #0a0a0f,
+    0 0 0 7px var(--border-subtle),
+    0 32px 80px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  animation: panelIn var(--duration-enter) 0.1s var(--ease-out) forwards;
+}
+
+/* Side buttons */
+.phone::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 100px;
+  width: 3px;
+  height: 36px;
+  background: var(--border-default);
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 48px 0 var(--border-default);
+}
+
+.phone::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: 130px;
+  width: 3px;
+  height: 60px;
+  background: var(--border-default);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── NOTCH ───────────────────────────────────────────────────────────────────── */
+
+.phone__notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 30px;
+  background: #0a0a0f;
+  border-radius: 0 0 20px 20px;
+  z-index: var(--z-top);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone__notch-bar {
+  width: 60px;
+  height: 4px;
+  background: #1a1a24;
+  border-radius: 2px;
+  margin-top: 8px;
+}
+
+/* ── STATUS BAR ──────────────────────────────────────────────────────────────── */
+
+.phone__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px var(--space-7) var(--space-3);
+  flex-shrink: 0;
+}
+
+.phone__status-time {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.phone__status-icons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.phone__signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.phone__signal span {
+  width: 3px;
+  background: var(--text);
+  border-radius: 1px;
+  opacity: 0.8;
+}
+
+.phone__signal span:nth-child(1) {
+  height: 4px;
+}
+.phone__signal span:nth-child(2) {
+  height: 6px;
+}
+.phone__signal span:nth-child(3) {
+  height: 9px;
+}
+.phone__signal span:nth-child(4) {
+  height: 12px;
+}
+
+.phone__battery {
+  width: 20px;
+  height: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1.5px;
+}
+
+.phone__battery::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 0 1px 1px 0;
+}
+
+.phone__battery-fill {
+  width: 65%;
+  height: 100%;
+  background: var(--portal);
+  border-radius: 1px;
+  opacity: 0.9;
+}
+
+/* ── CHAT HEADER ─────────────────────────────────────────────────────────────── */
+
+.phone__chat-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-7) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.phone__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--plugin-dim);
+  border: 1px solid var(--plugin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--plugin);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.phone__contact-name {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+}
+
+.phone__contact-sub {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* ── MESSAGES ────────────────────────────────────────────────────────────────── */
+
+.phone__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  scrollbar-width: none;
+}
+
+.phone__messages::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── BUBBLE ──────────────────────────────────────────────────────────────────── */
+
+.bubble {
+  max-width: 82%;
+  padding: var(--space-4) var(--space-6);
+  border-radius: 18px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+  animation: bubbleIn 0.3s var(--ease-out) forwards;
+  word-break: break-word;
+}
+
+@keyframes bubbleIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Jonas — blue (outgoing style) */
+.bubble--jonas {
+  align-self: flex-end;
+  background: var(--plugin);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+/* User — grey (incoming style) */
+.bubble--user {
+  align-self: flex-start;
+  background: var(--surface-hover);
+  color: var(--text);
+  border: 1px solid var(--border-subtle);
+  border-bottom-left-radius: 4px;
+}
+
+/* Typing indicator */
+.bubble--typing {
+  align-self: flex-end;
+  background: var(--plugin);
+  padding: var(--space-4) var(--space-6);
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typing-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  animation: typingPulse 1.1s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes typingPulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* Timestamp divider */
+.bubble-time {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  opacity: 0.5;
+  margin: var(--space-2) 0;
+}
+
+/* ── OPTION PILLS ────────────────────────────────────────────────────────────── */
+
+.bubble-options {
+  align-self: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: bubbleIn 0.3s var(--ease-out) forwards;
+}
+
+.bubble-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition:
+    color var(--duration-normal),
+    background var(--duration-normal),
+    border-color var(--duration-normal),
+    transform var(--duration-fast);
+}
+
+.bubble-option:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+.bubble-option.is-selected {
+  color: var(--plugin);
+  border-color: var(--plugin);
+  background: var(--plugin-dim);
+}
+
+.bubble-option__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ── INPUT ROW ───────────────────────────────────────────────────────────────── */
+
+.phone__input-row {
+  padding: var(--space-3) var(--space-5) var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.phone__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
+  transition: border-color var(--duration-normal);
+}
+
+.phone__input-wrap:focus-within {
+  border-color: var(--border-hover);
+}
+
+.phone__input {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  min-height: 22px;
+  max-height: 80px;
+  overflow-y: auto;
+  line-height: 1.5;
+  caret-color: var(--plugin);
+  scrollbar-width: none;
+}
+
+.phone__input:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.phone__send-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--plugin);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.3;
+  transition:
+    opacity var(--duration-normal),
+    transform var(--duration-fast),
+    background var(--duration-normal);
+  pointer-events: none;
+}
+
+.phone__send-btn:not([disabled]) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.phone__send-btn:not([disabled]):hover {
+  transform: scale(1.08);
+  background: hsl(210, 90%, 65%);
+}
+
+.phone__send-btn svg {
+  width: 14px;
+  height: 14px;
+  color: #fff;
+}
+
+/* Input row hidden when using option pills only */
+.phone__input-row.is-hidden {
+  display: none;
+}
+
+/* ── KEYBOARD ────────────────────────────────────────────────────────────────── */
+
+.phone__keyboard {
+  background: #141420;
+  border-top: 1px solid var(--border-subtle);
+  padding: var(--space-3) var(--space-3) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.kbd-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.kbd-row--inset {
+  padding: 0 var(--space-4);
+}
+
+.kbd-key {
+  height: 40px;
+  min-width: 28px;
+  flex: 1;
+  max-width: 38px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #1e1e2e;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+  transition:
+    background var(--duration-fast),
+    transform var(--duration-fast),
+    box-shadow var(--duration-fast),
+    color var(--duration-fast),
+    border-color var(--duration-fast);
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.kbd-key svg {
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.kbd-key--action {
+  background: #111120;
+  color: var(--muted);
+  flex: 1.4;
+  max-width: 50px;
+}
+
+.kbd-key--sm {
+  font-size: var(--text-xs);
+  max-width: 52px;
+}
+
+.kbd-key--space {
+  flex: 4;
+  max-width: 180px;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* Key press state */
+.kbd-key:active,
+.kbd-key.is-pressed {
+  background: var(--plugin-dim);
+  border-color: var(--plugin);
+  color: var(--plugin);
+  transform: translateY(1px) scale(0.95);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.kbd-key.is-pressed svg path {
+  stroke: var(--plugin);
+}
+
+/* Ripple on key press */
+.kbd-key::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at center,
+    var(--plugin) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.kbd-key.is-pressed::after {
+  opacity: 0.15;
+}
+
+/* ── CONFIRM / SEND STATE ────────────────────────────────────────────────────── */
+
+.phone__send-final {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  animation: bubbleIn 0.3s var(--ease-out) forwards;
+  opacity: 0;
+}
+
+.send-final-btn {
+  padding: var(--space-4) var(--space-7);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition:
+    background var(--duration-normal),
+    border-color var(--duration-normal),
+    color var(--duration-normal),
+    transform var(--duration-fast);
+  text-align: center;
+}
+
+.send-final-btn--primary {
+  background: var(--plugin);
+  color: #fff;
+}
+
+.send-final-btn--primary:hover {
+  background: hsl(210, 90%, 65%);
+  transform: translateY(-1px);
+}
+
+.send-final-btn--secondary {
+  background: transparent;
+  color: var(--muted);
+  border-color: var(--border-subtle);
+}
+
+.send-final-btn--secondary:hover {
+  color: var(--text);
+  border-color: var(--border-default);
+}
+
+/* ── SUCCESS STATE ───────────────────────────────────────────────────────────── */
+
+.phone__keyboard.is-hidden,
+.phone__input-row.is-hidden {
+  display: none;
+}
