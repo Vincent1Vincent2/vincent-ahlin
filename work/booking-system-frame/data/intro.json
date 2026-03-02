@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "project": "Booking System",
+    "tagline": "A minimal, fully tested room booking platform built with TypeScript, Express, Prisma, and Cypress.",
+    "role": "Full-Stack Developer",
+    "stats": [
+      { "value": "2", "label": "Applications (Client + Server)" },
+      { "value": "E2E", "label": "Cypress Tested" },
+      { "value": "JWT", "label": "Secure Auth Flow" },
+      { "value": "Prisma", "label": "ORM & Migrations" }
+    ]
+  },
+  "overview": {
+    "heading": "What is the Booking System?",
+    "intro": "This project is a modular booking platform designed as a general-purpose system for reservable resources such as conference rooms, laundry facilities, or small-scale hotel rooms.",
+    "body": "The focus of the project is not visual design but architecture, validation, and test reliability. The system separates a TypeScript-based client from an Express API server, enforces authentication and rate limiting, integrates reCAPTCHA, and maintains booking lifecycle integrity through automated archiving logic and end-to-end test coverage.",
+    "systems": [
+      {
+        "id": "client-app",
+        "num": "01",
+        "title": "TypeScript Client",
+        "color": "var(--site)",
+        "summary": "Vanilla TypeScript SPA with custom routing and modular structure.",
+        "detail": "The client is bundled with Webpack and structured by feature (booking, user, router, components). It communicates with the API via Axios, enforces input validation, integrates reCAPTCHA v2, and maintains a clean separation between UI logic and API utilities."
+      },
+      {
+        "id": "api-server",
+        "num": "02",
+        "title": "Express API",
+        "color": "var(--server)",
+        "summary": "REST API with JWT auth, rate limiting, and secure middleware.",
+        "detail": "The Node.js/Express server exposes authentication, booking, room, and user endpoints. It uses JWT for session handling, bcrypt for password hashing, middleware-based route protection, rate limiting, and environment-based configuration for secure deployment."
+      },
+      {
+        "id": "database-layer",
+        "num": "03",
+        "title": "Prisma & Database",
+        "color": "var(--plugin)",
+        "summary": "Schema-driven data modeling with migrations and client generation.",
+        "detail": "Prisma manages the booking, user, and room models with migrations and generated clients. The setup ensures consistent schema evolution, seed support, and strong typing between server logic and database access."
+      },
+      {
+        "id": "testing-layer",
+        "num": "04",
+        "title": "Cypress E2E Testing",
+        "color": "var(--portal)",
+        "summary": "Full end-to-end test coverage of critical user flows.",
+        "detail": "Cypress tests cover registration, login validation, booking creation, editing, deletion, and booking visibility. Invalid flows are explicitly tested to ensure validation, error handling, and business rules behave predictably."
+      }
+    ]
+  },
+  "stack": {
+    "heading": "Technology Stack",
+    "cards": [
+      {
+        "system": "Frontend",
+        "color": "var(--site)",
+        "front": "TypeScript (Vanilla)",
+        "back": "Custom SPA architecture with modular routing, Webpack bundling, and Axios-based API abstraction."
+      },
+      {
+        "system": "Backend",
+        "color": "var(--server)",
+        "front": "Node.js + Express",
+        "back": "RESTful API with structured controllers, middleware, JWT authentication, rate limiting, and reCAPTCHA verification."
+      },
+      {
+        "system": "Database",
+        "color": "var(--plugin)",
+        "front": "Prisma ORM",
+        "back": "Schema-based modeling, migrations, seed scripts, and generated client for type-safe database operations."
+      },
+      {
+        "system": "Testing",
+        "color": "var(--portal)",
+        "front": "Cypress",
+        "back": "Comprehensive E2E testing suite validating authentication, booking lifecycle, error states, and protected routes."
+      }
+    ]
+  },
+  "challenges": {
+    "heading": "Key Technical Challenges",
+    "intro": "Building reliability and correctness into a seemingly simple booking flow required careful system design.",
+    "description": "Security, state integrity, and test determinism were core priorities.",
+    "items": [
+      {
+        "num": "01",
+        "title": "Authentication & Session Security",
+        "color": "var(--server)",
+        "summary": "Secure login and protected routes with JWT and middleware.",
+        "detail": "Implemented JWT-based authentication with bcrypt password hashing, cookie/session handling, protected routes, and rate limiting to prevent abuse."
+      },
+      {
+        "num": "02",
+        "title": "Booking Lifecycle Integrity",
+        "color": "var(--plugin)",
+        "summary": "Separating active and archived bookings automatically.",
+        "detail": "Designed logic to distinguish upcoming bookings from past bookings and archive them automatically once their date passes, ensuring accurate user views."
+      },
+      {
+        "num": "03",
+        "title": "End-to-End Test Reliability",
+        "color": "var(--portal)",
+        "summary": "Deterministic Cypress tests across auth and booking flows.",
+        "detail": "Created comprehensive Cypress suites for valid and invalid flows, including registration errors, booking validation, editing, deletion, and protected access."
+      },
+      {
+        "num": "04",
+        "title": "Environment & Security Integration",
+        "color": "var(--site)",
+        "summary": "Integrating reCAPTCHA and environment-based configuration.",
+        "detail": "Configured secure environment variables for both client and server, integrated Google reCAPTCHA v2 validation, and ensured safe production configuration."
+      }
+    ]
+  },
+  "role": {
+    "heading": "Role",
+    "intro": "This project was built as a full-stack system with a focus on code quality and testing discipline.",
+    "title": "Full-Stack Developer",
+    "body": "I designed and implemented both the client and server architecture, structured the database schema with Prisma, implemented secure authentication, and built the entire end-to-end testing suite with Cypress.",
+    "lines": [
+      "Architected client/server separation",
+      "Implemented JWT authentication and security middleware",
+      "Designed Prisma schema and migration workflow",
+      "Built and maintained Cypress E2E test suite",
+      "Configured production deployment with environment isolation"
+    ]
+  },
+  "deployment": {
+    "heading": "Deployment",
+    "intro": "The system is structured for local development, testing, and production deployment.",
+    "items": [
+      {
+        "label": "Frontend",
+        "where": "Vercel",
+        "detail": "Webpack-built client deployed to Vercel with environment-based configuration."
+      },
+      {
+        "label": "Backend",
+        "where": "Node Environment",
+        "detail": "Express API with Prisma ORM, environment variables, and optional production hosting support."
+      }
+    ]
+  }
+}
