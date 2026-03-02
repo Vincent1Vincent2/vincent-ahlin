@@ -332,11 +332,9 @@ const Contact = (() => {
   }
 
   // ── SEND ──────────────────────────────────────────────────────────────────
-  // The endpoint lives on Vercel — separate from GitHub Pages.
-  // Replace VERCEL_URL with your actual deployed function URL.
-  // e.g. https://your-project.vercel.app/api/contact
+  // Endpoint — separate from GitHub Pages.
 
-  const API_URL = "https://your-project.vercel.app/api/contact";
+  const API_URL = "https://vincent-ahlin.vercel.app/api/contact";
 
   async function sendMessage() {
     try {

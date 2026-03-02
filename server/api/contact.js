@@ -1,12 +1,6 @@
 // ── CONTACT ENDPOINT ──────────────────────────────────────────────────────────
 // Vercel serverless function — receives POST from contact.html,
-// sends an email to your Gmail via Nodemailer + Gmail SMTP.
-//
-// Environment variables (set in Vercel dashboard):
-//   GMAIL_USER     — Gmail address used to send (e.g.
-//   GMAIL_PASS     — Gmail App Password
-//   CONTACT_TO     — address to receive messages
-//   ALLOWED_ORIGIN — GitHub Pages URL (for me) (e.g. https://username.github.io)
+// sends an email to Gmail via Nodemailer + Gmail SMTP.
 
 const nodemailer = require("nodemailer");
 
