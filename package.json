@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Serverless contact endpoint for portfolio site",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
+}
