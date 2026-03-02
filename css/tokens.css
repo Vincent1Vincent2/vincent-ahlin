@@ -33,9 +33,9 @@
   --font-mono: "DM Mono", monospace;
 
   /* Typography — scale (5 steps) */
-  --text-xs: 8px;
-  --text-sm: 10px;
-  --text-md: 13px;
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-md: 14px;
   --text-base: 15px;
   --text-lg: 17px;
 

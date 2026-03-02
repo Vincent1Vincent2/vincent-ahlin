@@ -15,7 +15,7 @@
   "overview": {
     "heading": "What is MultiLang?",
     "intro": "MultiLang is a multilingual WordPress plugin sold as a subscription, with four connected systems: plugin, license server, marketing site, and customer portal. The cards below summarise each.",
-    "body": "The plugin validates and activates against the license server (ml). The marketing site runs Stripe Checkout and, on payment, creates new customers and licenses via the server API. The portal handles auth, licenses, payments, and support. The marketing theme ships a documentation structure with auto-install.",
+    "body": "The plugin validates and activates against the license server. The marketing site runs Stripe Checkout and, on payment, creates new customers and licenses via the server API. The portal handles auth, licenses, payments, and support. The marketing theme ships a documentation structure with auto-install.",
     "systems": [
       {
         "id": "plugin",
@@ -177,10 +177,22 @@
     "heading": "Deployment",
     "intro": "Multi-provider setup: license server on GCP with GitHub Actions; marketing site and portal on DigitalOcean with GitHub Actions; DNS and domains managed separately.",
     "items": [
-      { "label": "License server", "where": "GCP", "detail": "Procfile, GitHub Actions" },
-      { "label": "Marketing & Portal", "where": "DigitalOcean", "detail": "GitHub Actions connected" },
+      {
+        "label": "License server",
+        "where": "GCP",
+        "detail": "Procfile, GitHub Actions"
+      },
+      {
+        "label": "Marketing & Portal",
+        "where": "DigitalOcean",
+        "detail": "GitHub Actions connected"
+      },
       { "label": "DNS", "where": "DigitalOcean", "detail": "" },
-      { "label": "Domains / URLs", "where": "GoDaddy", "detail": "All URLs except server" }
+      {
+        "label": "Domains / URLs",
+        "where": "GoDaddy",
+        "detail": "All URLs except server"
+      }
     ]
   }
 }

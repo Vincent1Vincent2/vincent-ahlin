@@ -1,0 +1,43 @@
+{
+  "pages": [
+    {
+      "id": "index",
+      "label": "Intro",
+      "href": "index.html",
+      "color": "var(--text)"
+    },
+    {
+      "id": "endpoint-station",
+      "label": "Endpoint Station",
+      "href": "endpoint-station.html",
+      "color": "var(--plugin)"
+    },
+    {
+      "id": "capability-cabinet",
+      "label": "Capability Cabinet",
+      "href": "capability-cabinet.html",
+      "color": "var(--server)"
+    }
+  ],
+  "sections": {
+    "index": [
+      { "id": "overview", "label": "Overview", "color": "var(--text)" },
+      { "id": "challenges", "label": "Challenges", "color": "var(--server)" },
+      { "id": "role", "label": "Role", "color": "var(--site)" },
+      { "id": "stack", "label": "Stack", "color": "var(--plugin)" },
+      { "id": "business", "label": "Business", "color": "var(--portal)" },
+      { "id": "deployment", "label": "Deployment", "color": "var(--muted)" }
+    ],
+    "endpoint-station": [
+      { "id": "api", "label": "API Surface", "color": "var(--server)" }
+    ],
+    "capability-cabinet": [
+      {
+        "id": "capabilities-cabinet",
+        "label": "Capabilities",
+        "color": "var(--server)"
+      },
+      { "id": "architecture", "label": "Architecture", "color": "var(--site)" }
+    ]
+  }
+}

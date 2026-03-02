@@ -24,12 +24,12 @@ const Nav = (() => {
 
   function currentPage() {
     const p = window.location.pathname;
-    if (p.endsWith("index.html")) return "ecosystem";
+    if (p.endsWith("endpoint-station.html")) return "endpoint-station";
     if (p.endsWith("capability-cabinet.html")) return "capability-cabinet";
-    return "intro";
+    return "index";
   }
 
-  const isIntro = () => currentPage() === "intro";
+  const isIntro = () => currentPage() === "index";
 
   // ── DOM REFS ───────────────────────────────────────────────────────────────
 
