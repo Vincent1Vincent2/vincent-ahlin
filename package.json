@@ -4,7 +4,7 @@
   "private": true,
   "description": "Serverless contact endpoint for portfolio site",
   "engines": {
-    "node": ">=20.0.0"
+    "node": "20.x"
   },
   "dependencies": {
     "nodemailer": "^6.9.9"

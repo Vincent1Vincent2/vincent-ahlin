@@ -244,8 +244,8 @@
   }
 }
 
-/* Jonas — blue (outgoing style) */
-.bubble--jonas {
+/* Vincent — blue (outgoing style) */
+.bubble--Vincent {
   align-self: flex-end;
   background: var(--plugin);
   color: #fff;

@@ -5,13 +5,12 @@
 // Backend send is stubbed — wire up when hosting is decided.
 
 const Contact = (() => {
-
   // ── STATE ──────────────────────────────────────────────────────────────────
 
   const state = {
-    step: "greeting",   // greeting | name | subject | message | email | confirm | sent
+    step: "greeting", // greeting | name | subject | message | email | confirm | sent
     name: "",
-    subject: "",        // "job" | "freelance"
+    subject: "", // "job" | "freelance"
     message: "",
     email: "",
   };
@@ -34,7 +33,8 @@ const Contact = (() => {
     updateTime();
     // Tick at the next whole minute then every 60s
     const now = new Date();
-    const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+    const msToNextMinute =
+      (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
     setTimeout(() => {
       updateTime();
       setInterval(updateTime, 60000);
@@ -78,21 +78,21 @@ const Contact = (() => {
     return el;
   }
 
-  // Jonas "types" then sends — shows typing indicator for duration then replaces with bubble
-  function jonasTypes(text, typingMs = 1100) {
+  // Vincent "types" then sends — shows typing indicator for duration then replaces with bubble
+  function vincentTypes(text, typingMs = 1100) {
     return new Promise((resolve) => {
       const indicator = addTypingIndicator();
       setTimeout(() => {
         indicator.remove();
-        addBubble(text, "jonas").then(resolve);
+        addBubble(text, "Vincent").then(resolve);
       }, typingMs);
     });
   }
 
-  // Chain multiple Jonas messages with typing gaps
-  async function jonasSequence(messages) {
+  // Chain multiple vincent messages with typing gaps
+  async function vincentSequence(messages) {
     for (const [text, delay] of messages) {
-      await jonasTypes(text, delay ?? 1000);
+      await vincentTypes(text, delay ?? 1000);
     }
   }
 
@@ -109,7 +109,7 @@ const Contact = (() => {
 
           btn.addEventListener("click", () => {
             // Disable all options
-            wrap.querySelectorAll(".bubble-option").forEach(b => {
+            wrap.querySelectorAll(".bubble-option").forEach((b) => {
               b.disabled = true;
               b.classList.remove("is-selected");
             });
@@ -154,18 +154,24 @@ const Contact = (() => {
   async function stepGreeting() {
     hideInput();
 
-    await jonasSequence([
-      ["Hey — you made it to the contact page. Most people just close the tab 👀", 1200],
-      ["I'm Jonas. I build things that feel like they were made by a human, not assembled by a checklist.", 1400],
+    await vincentSequence([
+      [
+        "Hey — you made it to the contact page. Most people just close the tab 👀",
+        1200,
+      ],
+      [
+        "I'm Vincent. I build things that feel like they were made by a human, not assembled by a checklist.",
+        1400,
+      ],
       ["If you've got something worth talking about — I'm listening.", 1000],
     ]);
 
-    await new Promise(r => setTimeout(r, 400));
-    await jonasTypes("What brings you here?", 900);
+    await new Promise((r) => setTimeout(r, 400));
+    await vincentTypes("What brings you here?", 900);
 
     const chosen = await addOptions([
-      { label: "Job opportunity",  value: "job" },
-      { label: "Freelance work",   value: "freelance" },
+      { label: "Job opportunity", value: "job" },
+      { label: "Freelance work", value: "freelance" },
     ]);
 
     state.subject = chosen;
@@ -173,12 +179,13 @@ const Contact = (() => {
   }
 
   async function stepAfterSubject() {
-    const reaction = state.subject === "job"
-      ? "Always open to hearing what's out there — especially if it's something worth getting excited about."
-      : "Freelance is my favourite kind of chaos. Let's see what you've got.";
+    const reaction =
+      state.subject === "job"
+        ? "Always open to hearing what's out there — especially if it's something worth getting excited about."
+        : "Freelance is my favourite kind of chaos. Let's see what you've got.";
 
-    await jonasTypes(reaction, 1100);
-    await jonasTypes("Before we get into it — what's your name?", 900);
+    await vincentTypes(reaction, 1100);
+    await vincentTypes("Before we get into it — what's your name?", 900);
 
     showInput("Your name…");
     state.step = "name";
@@ -199,13 +206,14 @@ const Contact = (() => {
     ];
     const reaction = reactions[Math.floor(Math.random() * reactions.length)];
 
-    await jonasTypes(reaction, 1000);
+    await vincentTypes(reaction, 1000);
 
-    const prompt = state.subject === "job"
-      ? "Tell me about the role — what kind of work is it?"
-      : "What's the project? Give me the short version.";
+    const prompt =
+      state.subject === "job"
+        ? "Tell me about the role — what kind of work is it?"
+        : "What's the project? Give me the short version.";
 
-    await jonasTypes(prompt, 1000);
+    await vincentTypes(prompt, 1000);
 
     showInput("Tell me more…");
     state.step = "message";
@@ -227,8 +235,8 @@ const Contact = (() => {
     ];
     const reaction = reactions[Math.floor(Math.random() * reactions.length)];
 
-    await jonasTypes(reaction, 1000);
-    await jonasTypes(`Last thing, ${state.name} — where do I find you?`, 900);
+    await vincentTypes(reaction, 1000);
+    await vincentTypes(`Last thing, ${state.name} — where do I find you?`, 900);
 
     showInput("your@email.com");
     state.step = "email";
@@ -238,7 +246,7 @@ const Contact = (() => {
     const email = getCurrentInput();
     if (!email || !email.includes("@")) {
       // Nudge without being rude
-      await jonasTypes("That doesn't look quite right — try again?", 700);
+      await vincentTypes("That doesn't look quite right — try again?", 700);
       inputEl.textContent = "";
       inputEl.focus();
       return;
@@ -248,11 +256,11 @@ const Contact = (() => {
     addBubble(email, "user");
     hideInput();
 
-    await jonasTypes("Alright, let me read that back —", 900);
+    await vincentTypes("Alright, let me read that back —", 900);
 
     const summary = `${state.name} · ${state.subject === "job" ? "Job opportunity" : "Freelance"}\n\n"${state.message}"\n\n📬 ${state.email}`;
-    await jonasTypes(summary, 1200);
-    await jonasTypes("That right?", 600);
+    await vincentTypes(summary, 1200);
+    await vincentTypes("That right?", 600);
 
     state.step = "confirm";
     showConfirm();
@@ -287,17 +295,23 @@ const Contact = (() => {
     const confirmEl = messagesEl.querySelector(".phone__send-final");
     if (confirmEl) confirmEl.remove();
 
-    await jonasTypes("Sending…", 600);
+    await vincentTypes("Sending…", 600);
 
     // ── STUB: replace with real fetch when backend is ready ──────────────────
     const success = await sendMessage();
     // ────────────────────────────────────────────────────────────────────────
 
     if (success) {
-      await jonasTypes("Sent. ✉️", 500);
-      await jonasTypes(`I'll get back to you soon, ${state.name}. Talk then.`, 1000);
+      await vincentTypes("Sent. ✉️", 500);
+      await vincentTypes(
+        `I'll get back to you soon, ${state.name}. Talk then.`,
+        1000,
+      );
     } else {
-      await jonasTypes("Hm — something went wrong on my end. Try emailing me directly at hello@jonaslundgren.dev", 1200);
+      await vincentTypes(
+        "Hm — something went wrong on my end. Try emailing me directly at vincent.ahlin@gmail.com",
+        1200,
+      );
     }
 
     state.step = "sent";
@@ -307,7 +321,13 @@ const Contact = (() => {
     // Clear everything and restart
     messagesEl.innerHTML = "";
     keyboardEl.classList.remove("is-hidden");
-    Object.assign(state, { step: "greeting", name: "", subject: "", message: "", email: "" });
+    Object.assign(state, {
+      step: "greeting",
+      name: "",
+      subject: "",
+      message: "",
+      email: "",
+    });
     stepGreeting();
   }
 
@@ -324,10 +344,10 @@ const Contact = (() => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name:    state.name,
+          name: state.name,
           subject: state.subject,
           message: state.message,
-          email:   state.email,
+          email: state.email,
         }),
       });
       return res.ok;
@@ -343,9 +363,18 @@ const Contact = (() => {
     const val = getCurrentInput();
     if (!val) return;
 
-    if (state.step === "name")    { stepAfterName();    return; }
-    if (state.step === "message") { stepAfterMessage(); return; }
-    if (state.step === "email")   { stepAfterEmail();   return; }
+    if (state.step === "name") {
+      stepAfterName();
+      return;
+    }
+    if (state.step === "message") {
+      stepAfterMessage();
+      return;
+    }
+    if (state.step === "email") {
+      stepAfterEmail();
+      return;
+    }
   }
 
   // ── PHYSICAL KEYBOARD ──────────────────────────────────────────────────────
@@ -354,11 +383,11 @@ const Contact = (() => {
   function physicalKeyMap(key) {
     const k = key.toLowerCase();
     // Map special keys to data-key values
-    if (k === " ")           return "space";
-    if (k === "backspace")   return "backspace";
-    if (k === "enter")       return "return";
-    if (k === "shift")       return "shift";
-    if (/^[a-z]$/.test(k))  return k;
+    if (k === " ") return "space";
+    if (k === "backspace") return "backspace";
+    if (k === "enter") return "return";
+    if (k === "shift") return "shift";
+    if (/^[a-z]$/.test(k)) return k;
     return null;
   }
 
@@ -384,7 +413,7 @@ const Contact = (() => {
       e.preventDefault();
     });
 
-    keyboardEl.querySelectorAll(".kbd-key").forEach(key => {
+    keyboardEl.querySelectorAll(".kbd-key").forEach((key) => {
       key.addEventListener("click", () => {
         const k = key.dataset.key;
         const input = inputEl;
@@ -404,23 +433,19 @@ const Contact = (() => {
           input.textContent = text.slice(0, -1);
           // Move caret to end
           const range = document.createRange();
-          const sel   = window.getSelection();
+          const sel = window.getSelection();
           range.selectNodeContents(input);
           range.collapse(false);
           sel.removeAllRanges();
           sel.addRange(range);
-
         } else if (k === "space") {
           input.textContent += " ";
-
         } else if (k === "return") {
           handleSend();
           return;
-
         } else if (k === "shift" || k === "123" || k === "emoji") {
           // No-op for now
           return;
-
         } else {
           // Regular character
           input.textContent += k;
@@ -428,7 +453,7 @@ const Contact = (() => {
 
         // Caret to end
         const range = document.createRange();
-        const sel   = window.getSelection();
+        const sel = window.getSelection();
         if (input.childNodes.length) {
           range.selectNodeContents(input);
           range.collapse(false);
@@ -472,11 +497,11 @@ const Contact = (() => {
 
   function init() {
     messagesEl = document.getElementById("phone-messages");
-    inputEl    = document.getElementById("phone-input");
-    sendBtn    = document.getElementById("phone-send");
-    inputRow   = document.getElementById("phone-input-row");
+    inputEl = document.getElementById("phone-input");
+    sendBtn = document.getElementById("phone-send");
+    inputRow = document.getElementById("phone-input-row");
     keyboardEl = document.getElementById("phone-keyboard");
-    timeEl     = document.getElementById("phone-time");
+    timeEl = document.getElementById("phone-time");
 
     startClock();
     setupInput();

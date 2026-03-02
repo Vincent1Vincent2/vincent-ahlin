@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/contact.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "routes": [
     {
       "src": "/api/contact",
