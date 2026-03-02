@@ -2,7 +2,6 @@
 // Renders project cards from pages.json.
 // Each card has a left info column and a right live-preview column.
 // Preview cycles through stages on a timer — stage set is per-project.
-// No images. All preview content is rendered DOM.
 
 const Landing = (() => {
   // ── FETCH ─────────────────────────────────────────────────────────────────
@@ -22,10 +21,6 @@ const Landing = (() => {
   }
 
   // ── PREVIEW STAGES ────────────────────────────────────────────────────────
-  // Each project defines which stages to cycle through.
-  // "ticker"  — animated stats from intro.json meta.stats
-  // "api"     — mini SVG node diagram (multilang only)
-  // "cabinet" — cabinet drawer sketch (multilang only)
 
   const PROJECT_STAGES = {
     multilang: ["ticker", "api", "cabinet"],
@@ -40,7 +35,7 @@ const Landing = (() => {
     cabinet: "Capability Cabinet",
   };
 
-  // ── MINI API NODES (multilang preview) ────────────────────────────────────
+  // ── MINI API NODES ────────────────────────────────────────────────────────
 
   const API_NODES = [
     { id: "plugin", label: "Plugin", x: 0.15, y: 0.28, color: "var(--plugin)" },
@@ -70,7 +65,6 @@ const Landing = (() => {
     svg.setAttribute("viewBox", "0 0 300 220");
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-    // Lines first (behind nodes)
     let activeIndex = 0;
     const lineEls = API_CONNECTIONS.map(([fromId, toId]) => {
       const from = API_NODES.find((n) => n.id === fromId);
@@ -90,7 +84,6 @@ const Landing = (() => {
       return path;
     });
 
-    // Nodes
     API_NODES.forEach((node) => {
       const g = document.createElementNS(ns, "g");
       g.setAttribute("class", "preview-api__node");
@@ -114,7 +107,6 @@ const Landing = (() => {
 
     wrap.appendChild(svg);
 
-    // Pulse active connection on interval
     function pulseNext() {
       lineEls.forEach((l, i) => {
         l.classList.toggle("preview-api__line--active", i === activeIndex);
@@ -155,8 +147,6 @@ const Landing = (() => {
         </div>
         <div class="preview-drawer__handle"></div>
       `;
-
-      // Stagger in
       setTimeout(() => el.classList.add("is-visible"), 80 * i);
       wrap.appendChild(el);
     });
@@ -170,7 +160,6 @@ const Landing = (() => {
     const wrap = document.createElement("div");
     wrap.className = "preview-ticker";
 
-    // Show stats in a 2-col micro grid
     const grid = document.createElement("div");
     grid.style.cssText =
       "display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%";
@@ -183,7 +172,6 @@ const Landing = (() => {
         <span class="ticker-stat__value">${s.value}</span>
         <span class="ticker-stat__label">${s.label}</span>
       `;
-      // Stagger in when stage becomes active
       el._staggerDelay = 60 * i;
       grid.appendChild(el);
     });
@@ -214,7 +202,6 @@ const Landing = (() => {
     const stages = PROJECT_STAGES[projectId] || ["ticker"];
     const stageEls = {};
 
-    // Build each stage element
     stages.forEach((stage) => {
       let el;
       if (stage === "ticker") {
@@ -230,12 +217,10 @@ const Landing = (() => {
       }
     });
 
-    // Stage label
     const label = document.createElement("div");
     label.className = "preview-stage-label";
     wrap.appendChild(label);
 
-    // Cycle logic
     let current = 0;
     let timer = null;
 
@@ -243,7 +228,6 @@ const Landing = (() => {
       const stageName = stages[index];
       const prev = stages[(index - 1 + stages.length) % stages.length];
 
-      // Deactivate previous
       const prevEl = stageEls[prev];
       if (prevEl) {
         prevEl.classList.remove("is-active");
@@ -251,7 +235,6 @@ const Landing = (() => {
         if (prevEl._cleanup) prevEl._cleanup();
       }
 
-      // Activate current
       const el = stageEls[stageName];
       if (el) {
         el.classList.add("is-active");
@@ -268,14 +251,11 @@ const Landing = (() => {
 
     function start() {
       showStage(0);
-      if (stages.length > 1) {
-        timer = setInterval(next, STAGE_DURATION);
-      }
+      if (stages.length > 1) timer = setInterval(next, STAGE_DURATION);
     }
 
     function stop() {
       clearInterval(timer);
-      // cleanup any running intervals inside stages
       stages.forEach((s) => {
         const el = stageEls[s];
         if (el?._cleanup) el._cleanup();
@@ -288,11 +268,19 @@ const Landing = (() => {
     return wrap;
   }
 
+  // ── RESOLVE HREF ──────────────────────────────────────────────────────────
+  // All card links need BASE_URL applied just like header nav
+
+  function resolveHref(href) {
+    if (!href || href === "#") return "#";
+    return BASE_URL + href.replace(/^\//, "");
+  }
+
   // ── BUILD PROJECT CARD ────────────────────────────────────────────────────
 
   function buildCard(project, introData) {
     const firstPage = project.pages[0];
-    const href = firstPage?.href || "#";
+    const href = resolveHref(firstPage?.href || "#");
     const accentColor = firstPage?.color || "var(--muted)";
 
     const card = document.createElement("a");
@@ -300,17 +288,16 @@ const Landing = (() => {
     card.href = href;
     card.style.setProperty("--accent", accentColor);
 
-    // ── Info column
     const stats = introData?.meta?.stats || [];
     const statsHTML = stats
       .slice(0, 4)
       .map(
         (s) => `
-      <div class="project-card__stat">
-        <span class="project-card__stat-value">${s.value}</span>
-        <span>${s.label}</span>
-      </div>
-    `,
+        <div class="project-card__stat">
+          <span class="project-card__stat-value">${s.value}</span>
+          <span>${s.label}</span>
+        </div>
+      `,
       )
       .join("");
 
@@ -318,7 +305,9 @@ const Landing = (() => {
     info.className = "project-card__info";
     info.innerHTML = `
       <div class="project-card__meta">
-        <div class="project-card__eyebrow">Solo Project · ${project.pages.length > 1 ? project.pages.length + " pages" : "1 page"}</div>
+        <div class="project-card__eyebrow">Solo Project · ${
+          project.pages.length > 1 ? project.pages.length + " pages" : "1 page"
+        }</div>
         <div class="project-card__title">${project.label}</div>
         <div class="project-card__tagline">${introData?.meta?.tagline || ""}</div>
       </div>
@@ -328,7 +317,6 @@ const Landing = (() => {
       </div>
     `;
 
-    // ── Preview column
     const preview = buildPreview(project.id, introData, accentColor);
 
     card.appendChild(info);
@@ -345,15 +333,11 @@ const Landing = (() => {
     if (!container) return;
 
     const work = data.work || [];
-
-    // Fetch all intro files in parallel
     const intros = await Promise.all(work.map((p) => fetchIntro(p.id)));
 
     work.forEach((project, i) => {
       const card = buildCard(project, intros[i]);
       container.appendChild(card);
-
-      // Stagger start so cards don't all animate in sync
       setTimeout(() => card._preview._start(), 400 + i * 200);
     });
   }
