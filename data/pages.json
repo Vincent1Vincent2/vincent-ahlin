@@ -27,7 +27,7 @@
         {
           "id": "index",
           "label": "Intro",
-          "href": "work/multilang/index.html",
+          "href": "/work/multilang/index.html",
           "color": "var(--text)",
           "sections": [
             { "id": "overview", "label": "Overview", "color": "var(--text)" },
@@ -49,7 +49,7 @@
         {
           "id": "endpoint-station",
           "label": "Endpoint Station",
-          "href": "work/multilang/endpoint-station.html",
+          "href": "/work/multilang/endpoint-station.html",
           "color": "var(--plugin)",
           "sections": [
             { "id": "api", "label": "API Surface", "color": "var(--server)" }
