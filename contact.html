@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Jonas</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/contact.css">
+</head>
+
+<body>
+
+  <!-- ── HEADER ────────────────────────────────────────────────────────────── -->
+  <header>
+    <div class="wordmark"><span>JL</span> · Contact</div>
+    <nav id="header-nav" aria-label="Site navigation"></nav>
+    <div class="header__meta">Let's talk</div>
+  </header>
+
+  <!-- ── MAIN ──────────────────────────────────────────────────────────────── -->
+  <main class="contact-stage" id="contact-stage">
+
+    <!-- ── PHONE SHELL ───────────────────────────────────────────────────────── -->
+    <div class="phone" id="phone" aria-label="Contact form — chat interface">
+
+      <!-- ── NOTCH ─────────────────────────────────────────────────────────── -->
+      <div class="phone__notch">
+        <div class="phone__notch-bar"></div>
+      </div>
+
+      <!-- ── STATUS BAR ────────────────────────────────────────────────────── -->
+      <div class="phone__status">
+        <span class="phone__status-time" id="phone-time">12:00</span>
+        <span class="phone__status-icons">
+          <span class="phone__signal">
+            <span></span><span></span><span></span><span></span>
+          </span>
+          <span class="phone__battery">
+            <span class="phone__battery-fill"></span>
+          </span>
+        </span>
+      </div>
+
+      <!-- ── CHAT HEADER ───────────────────────────────────────────────────── -->
+      <div class="phone__chat-header">
+        <div class="phone__avatar">JL</div>
+        <div class="phone__contact-info">
+          <div class="phone__contact-name">Jonas</div>
+          <div class="phone__contact-sub">Developer · Gothenburg</div>
+        </div>
+      </div>
+
+      <!-- ── MESSAGES ──────────────────────────────────────────────────────── -->
+      <div class="phone__messages" id="phone-messages" role="log" aria-live="polite">
+        <!-- filled by contact.js -->
+      </div>
+
+      <!-- ── INPUT ROW ─────────────────────────────────────────────────────── -->
+      <div class="phone__input-row" id="phone-input-row">
+        <div class="phone__input-wrap">
+          <div class="phone__input" id="phone-input" contenteditable="true" role="textbox" aria-label="Type your reply"
+            aria-multiline="false" spellcheck="false"></div>
+          <button class="phone__send-btn" id="phone-send" aria-label="Send" disabled>
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 15V5M10 5L6 9M10 5l4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── KEYBOARD ──────────────────────────────────────────────────────── -->
+      <div class="phone__keyboard" id="phone-keyboard" aria-hidden="true">
+        <div class="kbd-row">
+          <button class="kbd-key" data-key="q">q</button>
+          <button class="kbd-key" data-key="w">w</button>
+          <button class="kbd-key" data-key="e">e</button>
+          <button class="kbd-key" data-key="r">r</button>
+          <button class="kbd-key" data-key="t">t</button>
+          <button class="kbd-key" data-key="y">y</button>
+          <button class="kbd-key" data-key="u">u</button>
+          <button class="kbd-key" data-key="i">i</button>
+          <button class="kbd-key" data-key="o">o</button>
+          <button class="kbd-key" data-key="p">p</button>
+        </div>
+        <div class="kbd-row kbd-row--inset">
+          <button class="kbd-key" data-key="a">a</button>
+          <button class="kbd-key" data-key="s">s</button>
+          <button class="kbd-key" data-key="d">d</button>
+          <button class="kbd-key" data-key="f">f</button>
+          <button class="kbd-key" data-key="g">g</button>
+          <button class="kbd-key" data-key="h">h</button>
+          <button class="kbd-key" data-key="j">j</button>
+          <button class="kbd-key" data-key="k">k</button>
+          <button class="kbd-key" data-key="l">l</button>
+        </div>
+        <div class="kbd-row">
+          <button class="kbd-key kbd-key--action" data-key="shift" aria-label="Shift">
+            <svg viewBox="0 0 18 18" fill="none">
+              <path d="M9 3l6 6H12v5H6V9H3L9 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="kbd-key" data-key="z">z</button>
+          <button class="kbd-key" data-key="x">x</button>
+          <button class="kbd-key" data-key="c">c</button>
+          <button class="kbd-key" data-key="v">v</button>
+          <button class="kbd-key" data-key="b">b</button>
+          <button class="kbd-key" data-key="n">n</button>
+          <button class="kbd-key" data-key="m">m</button>
+          <button class="kbd-key kbd-key--action" data-key="backspace" aria-label="Backspace">
+            <svg viewBox="0 0 18 18" fill="none">
+              <path d="M13 9H7m0 0l2.5-2.5M7 9l2.5 2.5" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" />
+              <path d="M2 9l4-6h10v12H6L2 9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+        <div class="kbd-row">
+          <button class="kbd-key kbd-key--action kbd-key--sm" data-key="123">123</button>
+          <button class="kbd-key kbd-key--action kbd-key--sm" data-key="emoji" aria-label="Emoji">🌐</button>
+          <button class="kbd-key kbd-key--space" data-key="space">space</button>
+          <button class="kbd-key kbd-key--action kbd-key--sm" data-key="return" aria-label="Return">return</button>
+        </div>
+      </div>
+
+    </div>
+    <!-- /phone -->
+
+  </main>
+
+  <script src="javascript/header-nav.js"></script>
+  <script src="javascript/contact.js"></script>
+
+</body>
+
+</html>
