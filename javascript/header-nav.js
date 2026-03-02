@@ -1,36 +1,33 @@
-// ── SITE NAV ──────────────────────────────────────────────────────────────────
-// Renders the fixed center header nav from /data/pages.json.
-// Top-level: Home, Work, Contact (pill style, horizontal).
-// Work expands on hover → project list.
-// Projects with multiple pages expand further on hover → sub-pages.
-// No sections shown — sections belong to side-nav and bottom bar only.
+// ── HEADER NAV ────────────────────────────────────────────────────────────────
+// Renders the fixed center header nav from data/pages.json.
+// Requires base-url.js to be loaded first (provides BASE_URL).
 
-const SiteNav = (() => {
+const HeaderNav = (() => {
   // ── FETCH ─────────────────────────────────────────────────────────────────
 
   async function fetchData() {
-    const res = await fetch("/data/pages.json");
+    const res = await fetch(`${BASE_URL}data/pages.json`);
     return res.json();
   }
 
   // ── ACTIVE PAGE DETECTION ─────────────────────────────────────────────────
 
-  function currentPath() {
-    return window.location.pathname;
-  }
-
-  function norm(s) {
-    return s
-      .replace(/^\//, "")
-      .replace(/\.html$/, "")
-      .replace(/\/$/, "");
+  function norm(href) {
+    // Strip origin + BASE_URL prefix, trailing slash, .html
+    return (
+      href
+        .replace(window.location.origin, "")
+        .replace(BASE_URL, "")
+        .replace(/^\//, "")
+        .replace(/\.html$/, "")
+        .replace(/\/$/, "") || "index"
+    );
   }
 
   function isActivePage(href) {
-    return norm(currentPath()) === norm(href);
+    return norm(window.location.pathname) === norm(resolveHref(href));
   }
 
-  // Returns the active work entry or null
   function activeProject(workEntries) {
     return (
       workEntries?.find((w) => w.pages.some((p) => isActivePage(p.href))) ??
@@ -38,10 +35,20 @@ const SiteNav = (() => {
     );
   }
 
-  // ── BUILD ARROW SVG ───────────────────────────────────────────────────────
+  // ── RESOLVE HREF ──────────────────────────────────────────────────────────
+  // Stored hrefs use leading-slash absolute paths (/work/multilang/index.html).
+  // Prepend BASE_URL (minus trailing slash) so they resolve correctly on
+  // GitHub Pages subdirectory deployments.
+
+  function resolveHref(href) {
+    if (!href || href === "#") return "#";
+    return BASE_URL + href.replace(/^\//, "");
+  }
+
+  // ── ARROW SVG ─────────────────────────────────────────────────────────────
 
   function arrowSVG() {
-    return `<svg class="header-nav__group-arrow" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    return `<svg class="header-nav__group-arrow" viewBox="0 0 10 10" fill="none">
       <path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
   }
@@ -56,46 +63,31 @@ const SiteNav = (() => {
       const item = document.createElement("div");
       item.className = "header-nav__item";
 
-      // Pages without sub-content (Home, Contact) → plain link
       if (page.id !== "work") {
         const a = document.createElement("a");
         a.className = "header-nav__btn";
-        // Always use absolute href so links work from any depth
-        a.href = page.href.startsWith("/") ? page.href : "/" + page.href;
+        a.href = resolveHref(page.href);
         a.style.setProperty("--accent", page.color);
         if (isActivePage(page.href)) a.classList.add("is-active");
-
         a.innerHTML = `
           <span class="header-nav__dot"></span>
           <span>${page.label}</span>
         `;
         item.appendChild(a);
       } else {
-        // Work → button that opens dropdown of projects
         const btn = document.createElement("div");
         btn.className = "header-nav__btn";
-
         const active = activeProject(data.work);
-        if (active) {
-          const activePage = active.pages.find((p) => isActivePage(p.href));
-          const activeColor =
-            activePage?.color || active.pages[0]?.color || page.color;
-          btn.style.setProperty("--accent", activeColor);
-          btn.classList.add("is-active");
-        } else {
-          btn.style.setProperty("--accent", page.color);
-        }
-
+        btn.style.setProperty("--accent", page.color);
+        if (active) btn.classList.add("is-active");
+        btn.setAttribute("role", "button");
+        btn.setAttribute("tabindex", "0");
         btn.innerHTML = `
           <span class="header-nav__dot"></span>
           <span>${page.label}</span>
         `;
-
-        btn.setAttribute("role", "button");
-        btn.setAttribute("tabindex", "0");
         item.appendChild(btn);
 
-        // Dropdown
         const dropdown = document.createElement("div");
         dropdown.className = "header-nav__dropdown";
 
@@ -105,7 +97,6 @@ const SiteNav = (() => {
           group.className = "header-nav__group";
 
           if (hasMultiplePages) {
-            // Group with flyout sub-pages
             const groupBtn = document.createElement("div");
             groupBtn.className = "header-nav__group-btn";
             groupBtn.style.setProperty(
@@ -114,7 +105,7 @@ const SiteNav = (() => {
             );
             groupBtn.setAttribute("role", "button");
             groupBtn.setAttribute("tabindex", "0");
-
+            if (active?.id === project.id) groupBtn.classList.add("is-active");
             groupBtn.innerHTML = `
               <span class="header-nav__group-left">
                 <span class="header-nav__group-dot"></span>
@@ -124,38 +115,31 @@ const SiteNav = (() => {
             `;
             group.appendChild(groupBtn);
 
-            // Sub-pages flyout
             const sub = document.createElement("div");
             sub.className = "header-nav__sub";
-
             project.pages.forEach((p) => {
               const link = document.createElement("a");
               link.className = "header-nav__sub-link";
-              link.href = p.href;
+              link.href = resolveHref(p.href);
               link.style.setProperty("--accent", p.color);
               if (isActivePage(p.href)) link.classList.add("is-active");
-
               link.innerHTML = `
                 <span class="header-nav__sub-dot"></span>
                 <span>${p.label}</span>
               `;
               sub.appendChild(link);
             });
-
             group.appendChild(sub);
           } else {
-            // Single-page project → direct link, no arrow
             const firstPage = project.pages[0];
             const link = document.createElement("a");
             link.className = "header-nav__group-btn";
-            link.href = firstPage?.href || "#";
+            link.href = resolveHref(firstPage?.href);
             link.style.setProperty(
               "--accent",
               firstPage?.color || "var(--muted)",
             );
-            if (firstPage && isActivePage(firstPage.href))
-              link.classList.add("is-active");
-
+            if (active?.id === project.id) link.classList.add("is-active");
             link.innerHTML = `
               <span class="header-nav__group-left">
                 <span class="header-nav__group-dot"></span>
@@ -185,4 +169,4 @@ const SiteNav = (() => {
   return { init };
 })();
 
-document.addEventListener("DOMContentLoaded", SiteNav.init);
+document.addEventListener("DOMContentLoaded", HeaderNav.init);

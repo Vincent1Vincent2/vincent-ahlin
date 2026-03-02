@@ -1,273 +1,209 @@
-// ── SIDE NAV ──────────────────────────────────────────────
-// Project-specific sidebar using global pages.json
-// Behaves like original Nav but scoped to project pages only
+// ── SIDE NAV ──────────────────────────────────────────────────────────────────
+// Renders the project-level left sidebar (#site-nav), bottom nav bar (#nav-bar),
+// and hero pills (#nav-pills). Handles scroll tracking and section-active state.
+// Requires base-url.js to be loaded first (provides BASE_URL).
 
 const SideNav = (() => {
-  let pages = [];
-  let sections = [];
-  let collapsed = false;
-  let activeId = null;
-  let scrolling = false;
-  let scrollTimer = null;
+  // ── FETCH ─────────────────────────────────────────────────────────────────
 
-  // ── PAGE DETECTION ───────────────────────────────────────
-  function currentPage() {
-    const p = window.location.pathname;
-    const file = p.substring(p.lastIndexOf("/") + 1) || "index.html";
-    return file.replace(".html", "");
+  async function fetchData() {
+    const res = await fetch(`${BASE_URL}data/pages.json`);
+    return res.json();
   }
 
-  function currentProject() {
-    const parts = window.location.pathname.split("/");
-    const workIndex = parts.indexOf("work");
-    if (workIndex >= 0 && parts.length > workIndex + 1) {
-      return parts[workIndex + 1];
+  // ── CURRENT PROJECT DETECTION ─────────────────────────────────────────────
+  // Figures out which project we're in and which page within it.
+
+  function detectContext(data) {
+    const path = window.location.pathname;
+
+    for (const project of data.work || []) {
+      for (const page of project.pages) {
+        // Resolve href the same way header-nav does
+        const resolved = BASE_URL + page.href.replace(/^\//, "");
+        const resolvedNorm = norm(resolved);
+        const pathNorm = norm(path);
+
+        if (pathNorm === resolvedNorm) {
+          return { project, page };
+        }
+      }
     }
     return null;
   }
 
-  const isIntro = () => currentPage() === "index";
-
-  // ── DOM REFS ─────────────────────────────────────────────
-  let heroEl, pillsEl, barEl, sidebarEl, containerEl, heroObserver;
-
-  // ── FETCH DATA ──────────────────────────────────────────
-  async function fetchData() {
-    const res = await fetch("/data/pages.json");
-    const data = await res.json();
-
-    const project = currentProject();
-    if (project) {
-      const projectData = data.work.find((p) => p.id === project);
-      if (!projectData) return;
-
-      pages = projectData.pages || [];
-      const pageObj = pages.find((p) => p.id === currentPage());
-      sections = pageObj?.sections || [];
-    } else {
-      // Root pages
-      pages = data.pages || [];
-      sections = [];
-    }
+  function norm(s) {
+    return (
+      s
+        .replace(window.location.origin, "")
+        .replace(BASE_URL, "")
+        .replace(/^\//, "")
+        .replace(/\.html$/, "")
+        .replace(/\/$/, "") || "index"
+    );
   }
 
-  // ── HELPERS ──────────────────────────────────────────────
-  function resolveHref(page) {
-    if (page.href.startsWith("work/")) return page.href;
-    return page.href;
+  function resolveHref(href) {
+    if (!href || href === "#") return "#";
+    return BASE_URL + href.replace(/^\//, "");
   }
 
-  // ── RENDER SIDEBAR ──────────────────────────────────────
-  function renderSidebar() {
-    if (!sidebarEl) return;
-    sidebarEl.innerHTML = "";
+  // ── SIDEBAR ───────────────────────────────────────────────────────────────
+  // Shows the other pages within the current project.
 
-    pages.forEach((page) => {
-      const btn = document.createElement("a");
-      btn.className = "site-nav__item";
-      btn.href = resolveHref(page);
-      btn.dataset.id = page.id;
-      btn.style.setProperty("--accent", page.color);
+  function renderSidebar(project, currentPage) {
+    const nav = document.getElementById("site-nav");
+    if (!nav) return;
 
-      if (page.id === currentPage()) btn.classList.add("is-active");
+    project.pages.forEach((page) => {
+      const a = document.createElement("a");
+      a.className = "site-nav__item";
+      a.href = resolveHref(page.href);
+      a.style.setProperty("--accent", page.color);
+      if (page.id === currentPage.id) a.classList.add("is-active");
 
-      btn.innerHTML = `
+      a.innerHTML = `
         <span class="site-nav__dot"></span>
         <span class="site-nav__label">${page.label}</span>
       `;
-      sidebarEl.appendChild(btn);
+      nav.appendChild(a);
     });
   }
 
-  // ── RENDER HERO PILLS ───────────────────────────────────
-  function renderPills() {
-    if (!pillsEl || sections.length === 0) return;
-    pillsEl.innerHTML = "";
+  // ── HERO PILLS ────────────────────────────────────────────────────────────
+  // Shows sections of the current page inside the hero.
+
+  function renderHeroPills(sections) {
+    const nav = document.getElementById("nav-pills");
+    if (!nav || !sections?.length) return;
 
     sections.forEach((section, i) => {
       const btn = document.createElement("button");
       btn.className = "nav-pill";
-      btn.dataset.id = section.id;
+      btn.dataset.section = section.id;
       btn.style.setProperty("--accent", section.color);
-      btn.style.animationDelay = `${0.1 + i * 0.07}s`;
+      if (i === 0) btn.classList.add("is-active");
 
       btn.innerHTML = `
         <span class="nav-pill__dot"></span>
         <span class="nav-pill__label">${section.label}</span>
       `;
-      btn.addEventListener("click", () => handleSectionSelect(section));
-      pillsEl.appendChild(btn);
-    });
 
-    setTimeout(
-      () => pillsEl.classList.add("is-ready"),
-      600 + sections.length * 70 + 100,
-    );
+      btn.addEventListener("click", () => scrollToSection(section.id));
+      nav.appendChild(btn);
+    });
   }
 
-  // ── RENDER BOTTOM BAR ───────────────────────────────────
-  function renderBar() {
-    if (!barEl || sections.length === 0) return;
-    barEl.innerHTML = "";
+  // ── BOTTOM BAR ────────────────────────────────────────────────────────────
+  // Same sections as hero pills but in the sticky bottom bar.
 
-    const wordmark = document.createElement("div");
-    wordmark.className = "nav-bar__wordmark";
-    wordmark.innerHTML = `<span>${currentProject()?.substring(0, 2).toUpperCase() || "RT"}</span>`;
-    barEl.appendChild(wordmark);
+  function renderBottomBar(sections) {
+    const bar = document.getElementById("nav-bar");
+    if (!bar || !sections?.length) return;
 
-    const list = document.createElement("div");
-    list.className = "nav-bar__items";
-
-    sections.forEach((section) => {
+    sections.forEach((section, i) => {
       const btn = document.createElement("button");
       btn.className = "nav-bar__item";
-      btn.dataset.id = section.id;
+      btn.dataset.section = section.id;
       btn.style.setProperty("--accent", section.color);
+      if (i === 0) btn.classList.add("is-active");
 
       btn.innerHTML = `
         <span class="nav-bar__dot"></span>
         <span class="nav-bar__label">${section.label}</span>
       `;
-      btn.addEventListener("click", () => handleSectionSelect(section));
-      list.appendChild(btn);
-    });
 
-    barEl.appendChild(list);
-    updateActiveBar();
-  }
-
-  // ── ACTIVE STATE ────────────────────────────────────────
-  function setActive(id) {
-    if (activeId === id) return;
-    activeId = id;
-    updateActiveBar();
-    updateActivePills();
-  }
-
-  function updateActiveBar() {
-    if (!barEl) return;
-    barEl.querySelectorAll(".nav-bar__item").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.id === activeId);
+      btn.addEventListener("click", () => scrollToSection(section.id));
+      bar.appendChild(btn);
     });
   }
 
-  function updateActivePills() {
-    if (!pillsEl) return;
-    pillsEl.querySelectorAll(".nav-pill").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.id === activeId);
-    });
-  }
-
-  // ── COLLAPSE / UNCOLLAPSE ──────────────────────────────
-  function collapse() {
-    if (collapsed) return;
-    collapsed = true;
-
-    if (pillsEl) {
-      pillsEl.classList.remove("is-returning");
-      pillsEl.classList.add("is-collapsed");
-    }
-    if (barEl) barEl.classList.add("is-visible");
-
-    if (heroObserver) heroObserver.disconnect();
-  }
-
-  function uncollapse() {
-    if (!collapsed) return;
-    collapsed = false;
-
-    if (pillsEl) {
-      pillsEl.classList.remove("is-collapsed");
-      pillsEl.classList.add("is-returning");
-    }
-    if (barEl) barEl.classList.remove("is-visible");
-
-    watchHeroScroll();
-  }
-
-  // ── SCROLL → ACTIVE SECTION ─────────────────────────────
-  function resolveActiveFromScroll() {
-    if (!containerEl) return;
-    const scrollTop = containerEl.scrollTop;
-    const containerH = containerEl.clientHeight;
-
-    if (scrollTop < containerH * 0.25) {
-      setActive(null);
-      uncollapse();
-      return;
-    }
-
-    const sectionsEls = containerEl.querySelectorAll(
-      ".intro-section, .scroll-section",
-    );
-    let best = null,
-      bestDist = Infinity;
-
-    sectionsEls.forEach((section) => {
-      const dist = Math.abs(section.offsetTop - scrollTop);
-      if (dist < bestDist) {
-        bestDist = dist;
-        best = section;
-      }
-    });
-
-    if (best) setActive(best.id);
-  }
-
-  function watchScroll() {
-    if (!containerEl) return;
-    containerEl.addEventListener("scroll", () => {
-      if (scrolling) return;
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(resolveActiveFromScroll, 150);
-    });
-  }
+  // ── SCROLL TO SECTION ─────────────────────────────────────────────────────
 
   function scrollToSection(id) {
-    if (!containerEl) return;
-    const target = id === "hero" ? heroEl : document.getElementById(id);
-    if (!target) return;
-
-    scrolling = true;
-    setActive(id === "hero" ? null : id);
-    containerEl.scrollTo({ top: target.offsetTop, behavior: "smooth" });
-
-    setTimeout(() => (scrolling = false), 800);
+    const container = document.getElementById("scroll-container");
+    const target = document.getElementById(id);
+    if (!container || !target) return;
+    target.scrollIntoView({ behavior: "smooth" });
   }
 
-  function handleSectionSelect(section) {
-    collapse();
-    scrollToSection(section.id);
+  // ── SCROLL TRACKING ───────────────────────────────────────────────────────
+
+  function setupScrollTracking(sections) {
+    const container = document.getElementById("scroll-container");
+    const hero = document.getElementById("hero");
+    const bar = document.getElementById("nav-bar");
+    if (!container || !sections?.length) return;
+
+    function getActiveSection() {
+      const containerTop = container.getBoundingClientRect().top;
+      let active = sections[0].id;
+
+      for (const section of sections) {
+        const el = document.getElementById(section.id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - containerTop;
+        if (relTop <= container.clientHeight * 0.4) {
+          active = section.id;
+        }
+      }
+      return active;
+    }
+
+    function update() {
+      const activeId = getActiveSection();
+
+      // Update pills
+      document.querySelectorAll(".nav-pill, .nav-bar__btn").forEach((btn) => {
+        btn.classList.toggle("is-active", btn.dataset.section === activeId);
+      });
+
+      // Show/hide bottom bar based on hero visibility
+      if (hero && bar) {
+        const heroBottom = hero.getBoundingClientRect().bottom;
+        const containerTop = container.getBoundingClientRect().top;
+        bar.classList.toggle("is-visible", heroBottom - containerTop < 80);
+      }
+    }
+
+    container.addEventListener("scroll", update, { passive: true });
+    update();
   }
 
-  function watchHeroScroll() {
-    if (!heroEl) return;
-    heroObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) collapse();
+  // ── WAIT FOR SECTIONS ─────────────────────────────────────────────────────
+  // intro.js fires "intro:ready" when it's done appending sections.
+
+  function waitForIntro(sections) {
+    window.addEventListener(
+      "intro:ready",
+      () => {
+        setupScrollTracking(sections);
       },
-      { root: containerEl, threshold: 0.1 },
+      { once: true },
     );
-    heroObserver.observe(heroEl);
+
+    // Fallback in case intro:ready already fired or isn't coming
+    setTimeout(() => setupScrollTracking(sections), 1200);
   }
 
-  // ── INIT ────────────────────────────────────────────────
+  // ── INIT ──────────────────────────────────────────────────────────────────
+
   async function init() {
-    await fetchData();
-    heroEl = document.getElementById("hero");
-    pillsEl = document.getElementById("nav-pills");
-    barEl = document.getElementById("nav-bar");
-    sidebarEl = document.getElementById("site-nav");
-    containerEl = document.getElementById("scroll-container");
+    const data = await fetchData();
+    const ctx = detectContext(data);
+    if (!ctx) return; // Not on a project page
 
-    renderSidebar();
-    renderBar();
-    renderPills();
-    watchHeroScroll();
-    watchScroll();
+    const { project, page } = ctx;
+    const sections = page.sections || [];
+
+    renderSidebar(project, page);
+    renderHeroPills(sections);
+    renderBottomBar(sections);
+    waitForIntro(sections);
   }
 
-  return { init, collapse };
+  return { init };
 })();
 
 document.addEventListener("DOMContentLoaded", SideNav.init);

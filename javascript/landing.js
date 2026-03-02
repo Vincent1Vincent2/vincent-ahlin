@@ -8,13 +8,13 @@ const Landing = (() => {
   // ── FETCH ─────────────────────────────────────────────────────────────────
 
   async function fetchData() {
-    const res = await fetch("/data/pages.json");
+    const res = await fetch(`${BASE_URL}data/pages.json`);
     return res.json();
   }
 
   async function fetchIntro(projectId) {
     try {
-      const res = await fetch(`/work/${projectId}/data/intro.json`);
+      const res = await fetch(`${BASE_URL}work/${projectId}/data/intro.json`);
       return res.json();
     } catch {
       return null;
