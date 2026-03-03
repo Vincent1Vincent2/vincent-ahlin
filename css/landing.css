@@ -188,6 +188,22 @@ body:has(.landing-section) .scroll-container {
   transform: translateX(4px);
 }
 
+.project-card__github {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: auto;
+  transition: color var(--duration-normal);
+}
+
+.project-card__github:hover {
+  color: var(--accent, var(--text));
+}
+
 /* ── PROJECT CARD — PREVIEW COLUMN ──────────────────────────────────────────── */
 
 .project-card__preview {
