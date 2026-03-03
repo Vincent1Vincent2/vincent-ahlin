@@ -23,6 +23,7 @@
     {
       "id": "multilang",
       "label": "MultiLang",
+      "github": "",
       "pages": [
         {
           "id": "index",
@@ -76,8 +77,65 @@
       ]
     },
     {
+      "id": "spotipy",
+      "label": "Spotipy",
+      "github": "https://github.com/Vincent1Vincent2/python-based-spotify-client-for-raspberry-pi",
+      "pages": [
+        {
+          "id": "index",
+          "label": "Intro",
+          "href": "/work/spotipy/index.html",
+          "color": "var(--text)",
+          "sections": [
+            { "id": "overview", "label": "Overview", "color": "var(--text)" },
+            {
+              "id": "challenges",
+              "label": "Challenges",
+              "color": "var(--server)"
+            },
+            { "id": "role", "label": "Role", "color": "var(--site)" },
+            { "id": "stack", "label": "Stack", "color": "var(--plugin)" },
+            {
+              "id": "deployment",
+              "label": "Deployment",
+              "color": "var(--muted)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "migration-manager",
+      "label": "Migration Manager",
+      "github": "https://github.com/Vincent1Vincent2/playwrite-scraper-wp-migration-manager-plugin",
+      "pages": [
+        {
+          "id": "index",
+          "label": "Intro",
+          "href": "/work/migration-manager/index.html",
+          "color": "var(--text)",
+          "sections": [
+            { "id": "overview", "label": "Overview", "color": "var(--text)" },
+            {
+              "id": "challenges",
+              "label": "Challenges",
+              "color": "var(--server)"
+            },
+            { "id": "role", "label": "Role", "color": "var(--site)" },
+            { "id": "stack", "label": "Stack", "color": "var(--plugin)" },
+            {
+              "id": "deployment",
+              "label": "Deployment",
+              "color": "var(--muted)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spotipod",
       "label": "SpotiPod",
+      "github": "https://github.com/Vincent1Vincent2/virtual-ipod-spotify",
       "pages": [
         {
           "id": "index",
@@ -102,9 +160,11 @@
         }
       ]
     },
+
     {
       "id": "booking-system",
       "label": "Booking System",
+      "github": "https://github.com/Vincent1Vincent2/booking-system",
       "pages": [
         {
           "id": "index",

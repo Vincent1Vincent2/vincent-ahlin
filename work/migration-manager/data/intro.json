@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "project": "Migration Manager",
+    "tagline": "A WordPress migration assistant powered by a hardened Playwright scraper and adaptive content grouping.",
+    "role": "Solo Developer",
+    "stats": [
+      { "value": "2", "label": "Integrated systems" },
+      { "value": "4+", "label": "Content types" },
+      {
+        "value": "5",
+        "label": "Admin tools"
+      },
+      { "value": "Playwright", "label": "Headless browser engine" },
+      { "value": "FastAPI", "label": "Scraper API framework" }
+    ]
+  },
+  "overview": {
+    "heading": "What is Migration Manager?",
+    "intro": "Migration Manager is a WordPress plugin and companion scraper API that let editors pull structured content from external websites and reuse it inside WordPress without manual copy-paste.",
+    "body": "The plugin talks to a hardened FastAPI + Playwright scraper that runs an adaptive, content-weighted grouping algorithm in the browser. Scrapes are stored as JSON in a custom WordPress table, surfaced in a drag-and-drop interface, and can be reloaded, exported, or cleaned up from a dedicated admin dashboard.",
+    "systems": [
+      {
+        "id": "wordpress-plugin",
+        "num": "01",
+        "title": "WordPress Plugin",
+        "color": "var(--plugin)",
+        "summary": "A WordPress admin experience for scraping, storing, and reusing external content directly from the editor.",
+        "detail": "The plugin registers a top-level admin menu, a scraping dashboard, a settings page, and an editor sidebar/sticky panel for posts and pages. Scrapes are saved into a custom table with URL, JSON payload, timestamps, and status. Editors can kick off new scrapes, reload previous ones, see statistics, export data as JSON, and configure storage limits and auto-cleanup rules."
+      },
+      {
+        "id": "scraper-api",
+        "num": "02",
+        "title": "Scraper API",
+        "color": "var(--server)",
+        "summary": "A FastAPI service that drives a Playwright-powered Chromium browser to extract structured content and URLs.",
+        "detail": "The API launches a shared headless Chromium instance on startup and exposes endpoints for health checks, full-page scraping, and URL extraction. For each request it spins up a fresh page, navigates to the target, intelligently accepts cookie banners, and runs the grouping algorithm in the page context. The service is designed for containerized deployment with strict capability drops, read-only filesystems, and reverse-proxy termination."
+      },
+      {
+        "id": "grouping-algorithm",
+        "num": "03",
+        "title": "Adaptive Grouping Algorithm",
+        "color": "var(--portal)",
+        "summary": "An in-page algorithm that scores DOM nodes by content value and groups them into meaningful blocks instead of raw HTML noise.",
+        "detail": "The algorithm walks the visible DOM, filters out obvious chrome like headers, footers, and cookie banners, and assigns relevance scores based on element type, text richness, and media presence. It combines semantic containers, visual proximity, layout signals (flex/grid, backgrounds, borders), and pattern recognition to detect heroes, cards, features, and navigation. An anti-over-grouping pass breaks up oversized clusters, producing 50–150 usable content groups from thousands of elements."
+      },
+      {
+        "id": "editor-integration",
+        "num": "04",
+        "title": "Editor Integration & UX",
+        "color": "var(--site)",
+        "summary": "A drag-and-drop layer that lets editors move scraped items into any WordPress text or URL field, plus tools to manage historical scrapes.",
+        "detail": "Scraped items are rendered as draggable cards with clear visual affordances and hover states. Drop targets include classic textareas, text inputs, and URL inputs across the WordPress admin. The plugin formats dropped content intelligently—for example turning links into \"Text – URL\" strings—and highlights targets during drag. A recent-scrapes panel and sticky sidebar keep previous runs one click away, so editors can iterate without re-scraping."
+      }
+    ]
+  },
+  "stack": {
+    "heading": "Technology Stack",
+    "cards": [
+      {
+        "system": "WordPress",
+        "color": "var(--plugin)",
+        "front": "WordPress · PHP",
+        "back": "A custom plugin built with WordPress APIs, admin menus, meta boxes, and AJAX handlers. Uses a dedicated table (`wp_migration_manager_scrapes`) to store JSON payloads with indexes for URL and status."
+      },
+      {
+        "system": "Admin UI",
+        "color": "var(--server)",
+        "front": "JavaScript · Drag & Drop",
+        "back": "Custom admin JavaScript and CSS power the scraping dashboard, sticky editor sidebar, drag-and-drop interactions, visual feedback, and messaging. All logic is scoped to plugin pages and post/page editors via enqueue hooks."
+      },
+      {
+        "system": "Scraper",
+        "color": "var(--portal)",
+        "front": "FastAPI · Playwright",
+        "back": "FastAPI hosts a long-lived headless Chromium instance via Playwright. Endpoints handle scraping, URL extraction, and grouping. The browser is initialized on startup, reused across requests, and cleaned up gracefully on shutdown."
+      },
+      {
+        "system": "Algorithm",
+        "color": "var(--site)",
+        "front": "Content-Weighted Grouping",
+        "back": "A multi-phase algorithm written in JavaScript and executed inside the page. It scores elements, analyzes semantic containers, runs visual clustering, inspects CSS layout, and applies adaptive thresholds to balance single items and multi-item groups."
+      },
+      {
+        "system": "Deployment",
+        "color": "var(--muted)",
+        "front": "Docker · Nginx · TLS",
+        "back": "The scraper is designed for containerized deployment with a read-only filesystem, dropped Linux capabilities, tmpfs for `/tmp`, and reverse proxy termination via Nginx or Traefik with HTTPS, rate limiting, and optional IP allowlists."
+      }
+    ]
+  },
+  "challenges": {
+    "heading": "Key Technical Challenges",
+    "intro": "The hardest work sat at the intersection of browser automation, content modeling, and WordPress editor ergonomics.",
+    "description": "Each card captures a problem that could easily have produced a brittle tool, and how the final system avoids those traps.",
+    "items": [
+      {
+        "num": "01",
+        "title": "Turning arbitrary pages into usable content blocks",
+        "color": "var(--plugin)",
+        "summary": "Designing an algorithm that can extract meaningful groups from any website without overfitting to one layout.",
+        "detail": "Instead of relying on hardcoded selectors, the scraper scores every visible element by content value, filters obvious chrome like headers, footers, and cookie banners, and then layers semantic grouping, visual clustering, and CSS layout analysis. An adaptive scoring system tunes thresholds based on how many single items vs. groups it sees, and an over-grouping correction pass breaks up giant clusters. The result is a consistent mix of individual items and multi-item groups that still reflect the original design."
+      },
+      {
+        "num": "02",
+        "title": "Bridging WordPress and an external scraper safely",
+        "color": "var(--server)",
+        "summary": "Exposing a powerful scraping engine to WordPress without turning it into an unbounded security and performance risk.",
+        "detail": "The plugin treats the scraper as a configurable external service and never shells out directly from PHP. The FastAPI server is intended to run behind a reverse proxy on `127.0.0.1` with rate limits and TLS. Containers are run with `--cap-drop=ALL`, `--security-opt no-new-privileges`, read-only filesystems, and a tmpfs for `/tmp`. The README documents a hardened Nginx setup and operational limits so the system stays robust even under bad inputs."
+      },
+      {
+        "num": "03",
+        "title": "Making drag-and-drop feel native in the editor",
+        "color": "var(--portal)",
+        "summary": "Building a drag-and-drop layer that works across WordPress inputs without fighting the platform or confusing editors.",
+        "detail": "The admin script progressively enhances the plugin’s admin pages and the post/page editor, registering draggable cards for each scraped item and treating any textarea, text input, or URL input as a drop target. Visual indicators, hover states, and blinking feedback communicate where users can drop. Dropped content is formatted for its field—links become \"Text – URL\" strings—and all interactions respect WordPress’ own event model to avoid clashing with core behaviors."
+      },
+      {
+        "num": "04",
+        "title": "Keeping storage useful without bloating the database",
+        "color": "var(--site)",
+        "summary": "Storing full JSON scrapes for history and reloads while preventing long-term growth from overwhelming the site.",
+        "detail": "Scrapes are stored as JSON in a single purpose-built table with indexes on URL and status. The settings page exposes storage limits, auto-cleanup rules, and manual cleanup/export actions. A small statistics dashboard surfaces totals and success/failure rates so admins can see how the tool is being used. This keeps the data layer transparent and maintainable instead of hiding everything in opaque options or post meta."
+      }
+    ]
+  },
+  "role": {
+    "heading": "Role",
+    "intro": "Migration Manager is a full-stack solo build — from algorithm design through WordPress integration and deployment hardening.",
+    "title": "Solo Developer",
+    "body": "I designed and implemented both halves of the system: the Migration Manager WordPress plugin that editors touch every day, and the Playwright-based scraper backend that makes the whole experience possible. The work spans PHP, JavaScript, FastAPI, deployment, and security.",
+    "lines": [
+      "Architected the overall system connecting WordPress with a dedicated scraper API",
+      "Implemented the WordPress plugin, admin menus, settings, editor sidebar, and sticky panel",
+      "Designed and coded the adaptive content-weighted grouping algorithm running inside the browser",
+      "Built the FastAPI + Playwright service with shared browser lifecycle and async endpoints",
+      "Defined the custom database schema and CRUD flows for storing scrape history as JSON",
+      "Implemented drag-and-drop UX across WordPress text and URL fields with smart formatting",
+      "Documented secure Docker + Nginx deployment patterns, rate limiting, and operational limits",
+      "Handled error states, messaging, and troubleshooting guidance across both systems"
+    ]
+  },
+  "deployment": {
+    "heading": "Deployment",
+    "intro": "The plugin is built to feel like a native WordPress tool while the scraper API runs as a hardened sidecar service.",
+    "items": [
+      {
+        "label": "WordPress Plugin",
+        "where": "WordPress Admin",
+        "detail": "Installed as a standard plugin under `wp-migration-manager/`, registered via `migration-manager.php` with activation hooks, custom database tables, and versioned assets."
+      },
+      {
+        "label": "Scraper Service",
+        "where": "Docker / Podman",
+        "detail": "Containerized FastAPI app based on `python:3.11-slim`, Playwright with Chromium, and a startup script. Designed to run with a read-only filesystem, tmpfs for `/tmp`, and dropped capabilities."
+      },
+      {
+        "label": "Reverse Proxy",
+        "where": "Nginx or Traefik",
+        "detail": "HTTPS termination, `127.0.0.1` upstream, request timeouts, and rate limiting. Example Nginx config in the docs includes strict security headers and ACME TLS provisioning."
+      },
+      {
+        "label": "Environment",
+        "where": "Linux server",
+        "detail": "x86_64 or ARM64 host with Chromium dependencies, 1–2GB RAM recommended, and outbound HTTPS for scraping. Local development is supported on macOS/Linux via virtualenv or Docker."
+      }
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "project": "SpotiPi",
+    "tagline": "A lightweight Django Spotify client that turns a Raspberry Pi into a dedicated, WiFi-configurable streaming player with a clean web UI.",
+    "role": "Solo Developer",
+    "stats": [
+      { "value": "Django 5", "label": "Python web backend" },
+      { "value": "Raspberry Pi", "label": "Primary deployment target" },
+      { "value": "2 apps", "label": "Player + setup wizard" }
+    ]
+  },
+  "overview": {
+    "heading": "What is SpotiPi?",
+    "intro": "SpotiPi is a Django-based Spotify client built specifically for Raspberry Pi, providing a minimalist web interface that can run headless on a Pi or be accessed from any device on the network.",
+    "body": "The project combines a full-featured Spotify player with a first-boot setup wizard that handles WiFi, Spotify credentials, and audio output configuration, including support for popular I2S DACs. It is designed to be shipped as a custom Raspberry Pi OS image so end users can flash, boot, and start listening with minimal technical friction.",
+    "systems": [
+      {
+        "id": "spotify-player-ui",
+        "num": "01",
+        "title": "Spotify Player & UI",
+        "color": "var(--plugin)",
+        "summary": "Web-based player for controlling Spotify playback from a Raspberry Pi or browser.",
+        "detail": "The player app exposes a modern, minimalist web interface built with Django templates and custom CSS, backed by a dedicated Spotify API client. It supports device selection, playback controls, browsing playlists, albums and saved tracks, queue management, and a Web Playback SDK mode so the Pi can either act as a controller or as an actual playback device."
+      },
+      {
+        "id": "setup-wizard",
+        "num": "02",
+        "title": "First-Boot Setup Wizard",
+        "color": "var(--server)",
+        "summary": "Guided configuration flow for WiFi, Spotify credentials, and audio output.",
+        "detail": "The wizard app walks users through scanning and joining WiFi networks, entering Spotify API keys, and selecting audio output (analog, HDMI, or a range of I2S DACs). Under the hood it writes to system config files like wpa_supplicant, boot config overlays, and a dedicated Spotipi config, generating secrets and environment values so the main player can run without manual shell access."
+      },
+      {
+        "id": "os-image-and-services",
+        "num": "03",
+        "title": "OS Image & Services",
+        "color": "var(--portal)",
+        "summary": "Install and distribution tooling for a turnkey Raspberry Pi image.",
+        "detail": "Shell tooling and documentation automate installing the Django project into /opt/spotipi, provisioning a Python virtual environment, and wiring up a systemd service that runs the server on boot. A separate image creation workflow lets you bake a tested setup into a reusable Raspberry Pi OS image, including kiosk-mode browser launch on the local display."
+      }
+    ]
+  },
+  "stack": {
+    "heading": "Technology Stack",
+    "cards": [
+      {
+        "system": "Backend",
+        "color": "var(--server)",
+        "front": "Django 5 + Python 3.8+",
+        "back": "The core application is built with modern Django on Python 3.8+, using the standard ORM, views, and templating system to deliver the player and setup wizard."
+      },
+      {
+        "system": "Spotify Integration",
+        "color": "var(--plugin)",
+        "front": "Spotify Web API & Web Playback SDK",
+        "back": "A custom Spotify API client wraps the Web API for devices, playback, and library access, while the Web Playback SDK powers in-browser audio when SpotiPi acts as the active player."
+      },
+      {
+        "system": "Device & OS",
+        "color": "var(--portal)",
+        "front": "Raspberry Pi + Raspberry Pi OS",
+        "back": "Designed to run on Raspberry Pi boards with Raspberry Pi OS, including headless deployments and kiosk-mode local displays configured via systemd services."
+      },
+      {
+        "system": "Config & Environment",
+        "color": "var(--site)",
+        "front": "python-dotenv + custom config",
+        "back": "Environment variables and a dedicated config module coordinate secrets, Spotify credentials, and audio output settings across development and production images."
+      },
+      {
+        "system": "HTTP & Utilities",
+        "color": "var(--muted)",
+        "front": "Requests & shell tooling",
+        "back": "The project uses Requests for HTTP calls to Spotify and shell scripts for installation, image preparation, and system service management on the Pi."
+      }
+    ]
+  },
+  "challenges": {
+    "heading": "Key Technical Challenges",
+    "intro": "Building a reliable Spotify client on constrained Raspberry Pi hardware required careful handling of APIs, devices, and system configuration.",
+    "description": "The work went beyond a standard web app, blending OAuth, device management, low-level audio configuration, and OS image creation into a cohesive experience.",
+    "items": [
+      {
+        "num": "01",
+        "title": "Managing Spotify devices and playback modes",
+        "color": "var(--plugin)",
+        "summary": "Keep playback in sync across Web Playback SDK and Spotify Connect devices.",
+        "detail": "The player needs to seamlessly switch between the embedded web player and external Spotify Connect devices without surprising the user. This required tracking selected devices in session state, inspecting the current playback device from the API, and only auto-syncing when the user has not manually chosen a target, all while handling 204 responses and partial playback data."
+      },
+      {
+        "num": "02",
+        "title": "Configuring WiFi and audio at first boot",
+        "color": "var(--server)",
+        "summary": "Expose low-level Pi configuration through a safe web wizard.",
+        "detail": "The setup wizard translates simple web forms into safe updates to core Raspberry Pi configuration files, including wpa_supplicant for WiFi and boot overlays for a variety of I2S DACs. Implementing this required mapping UI selections to specific hardware overlays, validating user input, and ensuring changes were idempotent and reboot-safe."
+      },
+      {
+        "num": "03",
+        "title": "Packaging as a reusable OS image",
+        "color": "var(--portal)",
+        "summary": "Ship a flash-and-go image while keeping development ergonomic.",
+        "detail": "To support end users, the project includes scripts and documentation to install into /opt/spotipi, configure a systemd service, and then capture a clean Raspberry Pi OS image. Balancing this image-based workflow with a standard Django development setup required clear separation of environment configuration and careful handling of paths, services, and cleanup steps."
+      }
+    ]
+  },
+  "role": {
+    "heading": "Role",
+    "intro": "This was conceived and delivered as a focused solo project.",
+    "title": "Solo Developer",
+    "body": "I designed the overall architecture, implemented the Django apps for the player and setup wizard, wired up Spotify integrations, and built the Raspberry Pi installation and image-creation tooling. The goal was to deliver something that feels like a polished consumer device while still being hackable by developers.",
+    "lines": [
+      "Owned end-to-end design and implementation across backend, UI, and device configuration.",
+      "Integrated Spotify OAuth, playback APIs, and Raspberry Pi–specific audio and service configuration."
+    ]
+  },
+  "deployment": {
+    "heading": "Deployment",
+    "intro": "SpotiPi is designed to be both easy for end users to install and straightforward for developers to run locally.",
+    "items": [
+      {
+        "label": "Raspberry Pi OS image",
+        "where": "Raspberry Pi (3B+, 4, 5, Zero 2 W)",
+        "detail": "The recommended install path is a prebuilt Raspberry Pi OS image with SpotiPi baked in, flashed to an SD card and configured on first boot via the web-based setup wizard."
+      },
+      {
+        "label": "System service",
+        "where": "/opt/spotipi via systemd",
+        "detail": "On production images the Django server runs as a systemd service named `spotipi`, started automatically on boot and serving the web UI at port 8000 for both local kiosk-mode and network clients."
+      },
+      {
+        "label": "Local development",
+        "where": "Django runserver on localhost",
+        "detail": "For development the app runs with `python manage.py runserver 0.0.0.0:8000` on Python 3.8+, with configuration supplied by a local .env file and dependencies installed from requirements.txt."
+      }
+    ]
+  }
+}
